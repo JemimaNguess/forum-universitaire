@@ -1,75 +1,86 @@
 import React from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../context/AuthContext';
 import { tabBar } from '../components/theme';
 
+// ── Auth ──────────────────────────────────────
+import SplashScreen                from '../screens/auth/SplashScreen';
+import AccueilScreen               from '../screens/auth/AccueilScreen';
+import ChoixRoleScreen             from '../screens/auth/ChoixRoleScreen';
+import InscriptionEtudiantScreen   from '../screens/auth/InscriptionEtudiantScreen';
+import InscriptionEnseignantScreen from '../screens/auth/InscriptionEnseignantScreen';
+import VerificationEmailScreen     from '../screens/auth/VerificationEmailScreen';
+import ConnexionScreen             from '../screens/auth/ConnexionScreen';
+
+// ── Admin ─────────────────────────────────────
+/*import DashboardScreen    from '../screens/admin/DashboardScreen';
+import UtilisateursScreen from '../screens/admin/UtilisateursScreen';
+import ValidationsScreen  from '../screens/admin/ValidationsScreen';
+import CategoriesScreen   from '../screens/admin/CategoriesScreen';
+import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';*/
+
 // ── Écrans temporaires ────────────────────────
-const TempScreen = ({ nom }) => () => (
+const TempScreen = () => (
   <View style={{ flex:1, backgroundColor:'#0F0A1E', justifyContent:'center', alignItems:'center' }}>
-    <Text style={{ color:'#A78BFA', fontSize:18, fontWeight:'700' }}>{nom}</Text>
-    <Text style={{ color:'#6B7280', fontSize:13, marginTop:8 }}>En cours de développement</Text>
+    <ActivityIndicator color="#A78BFA" />
   </View>
 );
-
-// ── Écrans temporaires par rôle ───────────────
-const AdminTemp      = TempScreen({ nom: 'Dashboard Admin' });
-const EnseignantTemp = TempScreen({ nom: 'Dashboard Enseignant' });
-const EtudiantTemp   = TempScreen({ nom: 'Dashboard Étudiant' });
-const SplashTemp     = TempScreen({ nom: 'Splash Screen' });
-const AccueilTemp    = TempScreen({ nom: 'Écran d\'accueil' });
-const ConnexionTemp  = TempScreen({ nom: 'Connexion' });
 
 const Stack = createStackNavigator();
 const Tab   = createBottomTabNavigator();
 
+// ── Navigation Admin ──────────────────────────
 const AdminTabs = () => (
   <Tab.Navigator screenOptions={{
-    headerShown: false,
-    tabBarStyle: { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
+    headerShown:             false,
+    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
     tabBarActiveTintColor:   tabBar.activeTint,
     tabBarInactiveTintColor: tabBar.inactiveTint,
   }}>
-    <Tab.Screen name="Dashboard"    component={AdminTemp} options={{ tabBarLabel: 'Dashboard' }} />
-    <Tab.Screen name="Utilisateurs" component={AdminTemp} options={{ tabBarLabel: 'Utilisateurs' }} />
-    <Tab.Screen name="Validations"  component={AdminTemp} options={{ tabBarLabel: 'Validations' }} />
-    <Tab.Screen name="Categories"   component={AdminTemp} options={{ tabBarLabel: 'Catégories' }} />
-    <Tab.Screen name="Profil"       component={AdminTemp} options={{ tabBarLabel: 'Profil' }} />
+    <Tab.Screen name="Dashboard"    component={DashboardScreen}    options={{ tabBarLabel: 'Dashboard' }} />
+    <Tab.Screen name="Utilisateurs" component={UtilisateursScreen} options={{ tabBarLabel: 'Utilisateurs' }} />
+    <Tab.Screen name="Validations"  component={ValidationsScreen}  options={{ tabBarLabel: 'Validations' }} />
+    <Tab.Screen name="Categories"   component={CategoriesScreen}   options={{ tabBarLabel: 'Catégories' }} />
+    <Tab.Screen name="Profil"       component={ProfilAdminScreen}  options={{ tabBarLabel: 'Profil' }} />
   </Tab.Navigator>
 );
 
+// ── Navigation Enseignant ─────────────────────
 const EnseignantTabs = () => (
   <Tab.Navigator screenOptions={{
-    headerShown: false,
-    tabBarStyle: { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
+    headerShown:             false,
+    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
     tabBarActiveTintColor:   tabBar.activeTint,
     tabBarInactiveTintColor: tabBar.inactiveTint,
   }}>
-    <Tab.Screen name="Accueil"     component={EnseignantTemp} options={{ tabBarLabel: 'Accueil' }} />
-    <Tab.Screen name="Ressources"  component={EnseignantTemp} options={{ tabBarLabel: 'Ressources' }} />
-    <Tab.Screen name="Moderation"  component={EnseignantTemp} options={{ tabBarLabel: 'Modération' }} />
-    <Tab.Screen name="Notifs"      component={EnseignantTemp} options={{ tabBarLabel: 'Notifs' }} />
-    <Tab.Screen name="Profil"      component={EnseignantTemp} options={{ tabBarLabel: 'Profil' }} />
+    <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
+    <Tab.Screen name="Ressources" component={TempScreen} options={{ tabBarLabel: 'Ressources' }} />
+    <Tab.Screen name="Moderation" component={TempScreen} options={{ tabBarLabel: 'Modération' }} />
+    <Tab.Screen name="Notifs"     component={TempScreen} options={{ tabBarLabel: 'Notifs' }} />
+    <Tab.Screen name="Profil"     component={TempScreen} options={{ tabBarLabel: 'Profil' }} />
   </Tab.Navigator>
 );
 
+// ── Navigation Étudiant ───────────────────────
 const EtudiantTabs = () => (
   <Tab.Navigator screenOptions={{
-    headerShown: false,
-    tabBarStyle: { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
+    headerShown:             false,
+    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
     tabBarActiveTintColor:   tabBar.activeTint,
     tabBarInactiveTintColor: tabBar.inactiveTint,
   }}>
-    <Tab.Screen name="Accueil"    component={EtudiantTemp} options={{ tabBarLabel: 'Accueil' }} />
-    <Tab.Screen name="Categories" component={EtudiantTemp} options={{ tabBarLabel: 'Catégories' }} />
-    <Tab.Screen name="Creer"      component={EtudiantTemp} options={{ tabBarLabel: 'Créer' }} />
-    <Tab.Screen name="Notifs"     component={EtudiantTemp} options={{ tabBarLabel: 'Notifs' }} />
-    <Tab.Screen name="Profil"     component={EtudiantTemp} options={{ tabBarLabel: 'Profil' }} />
+    <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
+    <Tab.Screen name="Categories" component={TempScreen} options={{ tabBarLabel: 'Catégories' }} />
+    <Tab.Screen name="Creer"      component={TempScreen} options={{ tabBarLabel: 'Créer' }} />
+    <Tab.Screen name="Notifs"     component={TempScreen} options={{ tabBarLabel: 'Notifs' }} />
+    <Tab.Screen name="Profil"     component={TempScreen} options={{ tabBarLabel: 'Profil' }} />
   </Tab.Navigator>
 );
 
+// ── Navigateur principal ──────────────────────
 const AppNavigator = () => {
   const { user, loading, isAuthenticated } = useAuth();
 
@@ -86,9 +97,13 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <>
-            <Stack.Screen name="Splash"   component={SplashTemp} />
-            <Stack.Screen name="Accueil"  component={AccueilTemp} />
-            <Stack.Screen name="Connexion" component={ConnexionTemp} />
+            <Stack.Screen name="Splash"                  component={SplashScreen} />
+            <Stack.Screen name="Accueil"                 component={AccueilScreen} />
+            <Stack.Screen name="ChoixRole"               component={ChoixRoleScreen} />
+            <Stack.Screen name="InscriptionEtudiant"     component={InscriptionEtudiantScreen} />
+            <Stack.Screen name="InscriptionEnseignant"   component={InscriptionEnseignantScreen} />
+            <Stack.Screen name="VerificationEmail"       component={VerificationEmailScreen} />
+            <Stack.Screen name="Connexion"               component={ConnexionScreen} />
           </>
         ) : (
           <>
