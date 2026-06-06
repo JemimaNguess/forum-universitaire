@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  TextInput, ScrollView, ActivityIndicator
+  TextInput, ScrollView, ActivityIndicator,
+  Modal, FlatList
 } from 'react-native';
-import { useTheme } from '../../components/theme';
-import { semantic } from '../../components/theme';
+import { useTheme, semantic } from '../../components/theme';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
+
+const niveaux = [
+  { label: "Sélectionner votre niveau d'étude", value: '', disabled: true },
+  { label: 'Licence 1 ', value: 'L1' },
+  { label: 'Licence 2 ', value: 'L2' },
+  { label: 'Licence 3 ', value: 'L3' },
+  { label: 'Master 1 ',  value: 'M1' },
+  { label: 'Master 2 ',  value: 'M2' },
+];
 
 const InscriptionEtudiantScreen = ({ navigation }) => {
   const c = useTheme();
@@ -15,20 +25,21 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
   const [email,               setEmail]               = useState('');
   const [matricule,           setMatricule]           = useState('');
   const [filiere,             setFiliere]             = useState('');
-  const [niveau,              setNiveau]              = useState('L3');
+  const [niveau,              setNiveau]              = useState('');
   const [motDePasse,          setMotDePasse]          = useState('');
   const [confirmerMotDePasse, setConfirmerMotDePasse] = useState('');
   const [showPassword,        setShowPassword]        = useState(false);
   const [showConfirm,         setShowConfirm]         = useState(false);
   const [loading,             setLoading]             = useState(false);
   const [error,               setError]               = useState('');
+  const [showPicker,          setShowPicker]          = useState(false);
 
-  const niveaux = ['L1', 'L2', 'L3', 'M1', 'M2'];
+  const niveauLabel = niveaux.find(n => n.value === niveau)?.label || "Sélectionner votre niveau d'étude";
 
   const handleInscription = async () => {
     setError('');
 
-    if (!nom || !prenom || !email || !matricule || !filiere || !motDePasse || !confirmerMotDePasse) {
+    if (!nom || !prenom || !email || !matricule || !filiere || !niveau || !motDePasse || !confirmerMotDePasse) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
@@ -46,12 +57,7 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
     setLoading(true);
     try {
       await api.post('/register', {
-        nom,
-        prenom,
-        email,
-        matricule,
-        filiere,
-        niveau,
+        nom, prenom, email, matricule, filiere, niveau,
         password:              motDePasse,
         password_confirmation: confirmerMotDePasse,
         role:                  'etudiant',
@@ -147,27 +153,58 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
 
       {/* Niveau */}
       <Text style={[styles.label, { color: c.subtext }]}>Niveau *</Text>
-      <View style={styles.niveauxRow}>
-        {niveaux.map(n => (
-          <TouchableOpacity
-            key={n}
-            style={[
-              styles.niveauBtn,
-              { borderColor: c.border, backgroundColor: c.card },
-              niveau === n && { backgroundColor: c.primary, borderColor: c.primary }
-            ]}
-            onPress={() => setNiveau(n)}
-          >
-            <Text style={[
-              styles.niveauText,
-              { color: c.subtext },
-              niveau === n && { color: '#FFFFFF', fontWeight: '700' }
-            ]}>
-              {n}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <TouchableOpacity
+        style={[styles.pickerBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        onPress={() => setShowPicker(true)}
+      >
+        <Text style={[styles.pickerBtnText, { color: niveau ? c.text : c.subtext }]}>
+          {niveauLabel}
+        </Text>
+        <Ionicons name="chevron-down" size={18} color={c.subtext} />
+      </TouchableOpacity>
+
+      {/* Modal Picker */}
+      <Modal
+        visible={showPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
+              <Text style={[styles.modalTitle, { color: c.text }]}>Niveau d'étude</Text>
+              <TouchableOpacity onPress={() => setShowPicker(false)}>
+                <Ionicons name="close" size={24} color={c.subtext} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={niveaux.filter(n => !n.disabled)}
+              keyExtractor={item => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.niveauItem,
+                    { borderBottomColor: c.border },
+                    niveau === item.value && { backgroundColor: c.card }
+                  ]}
+                  onPress={() => {
+                    setNiveau(item.value);
+                    setShowPicker(false);
+                  }}
+                >
+                  <Text style={[styles.niveauItemText, { color: c.text }]}>
+                    {item.label}
+                  </Text>
+                  {niveau === item.value && (
+                    <Ionicons name="checkmark" size={20} color={c.primary} />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
 
       {/* Mot de passe */}
       <Text style={[styles.label, { color: c.subtext }]}>Mot de passe *</Text>
@@ -181,7 +218,11 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+          <Ionicons
+            name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 
@@ -197,7 +238,11 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
           secureTextEntry={!showConfirm}
         />
         <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-          <Text style={styles.eyeIcon}>{showConfirm ? '🙈' : '👁️'}</Text>
+          <Ionicons
+            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 
@@ -228,28 +273,32 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container:   { flex: 1 },
-  content:     { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
-  backBtn:     { marginBottom: 24 },
-  backText:    { fontSize: 24 },
-  title:       { fontSize: 26, fontWeight: 'bold' },
-  titleRole:   { fontSize: 18, marginBottom: 28 },
-  errorBox:    { borderRadius: 10, padding: 12, marginBottom: 16, borderWidth: 1 },
-  errorText:   { fontSize: 14 },
-  label:       { fontSize: 14, marginBottom: 8 },
-  hint:        { fontSize: 12, marginTop: -10, marginBottom: 16 },
-  input:       { borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14, fontSize: 15, marginBottom: 16, borderWidth: 1 },
-  inputRow:    { flexDirection: 'row', alignItems: 'center', borderRadius: 10, paddingHorizontal: 16, marginBottom: 16, borderWidth: 1 },
-  inputFlex:   { flex: 1, paddingVertical: 14, fontSize: 15 },
-  eyeIcon:     { fontSize: 18, paddingLeft: 8 },
-  niveauxRow:  { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  niveauBtn:   { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8, borderWidth: 1 },
-  niveauText:  { fontSize: 13 },
-  btnPrimary:  { paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8, marginBottom: 24 },
-  btnText:     { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
-  loginRow:    { flexDirection: 'row', justifyContent: 'center' },
-  loginText:   { fontSize: 14 },
-  loginLink:   { fontSize: 14, fontWeight: '600' },
+  container:       { flex: 1 },
+  content:         { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
+  backBtn:         { marginBottom: 24 },
+  backText:        { fontSize: 24 },
+  title:           { fontSize: 26, fontWeight: 'bold' },
+  titleRole:       { fontSize: 18, marginBottom: 28 },
+  errorBox:        { borderRadius: 10, padding: 12, marginBottom: 16, borderWidth: 1 },
+  errorText:       { fontSize: 14 },
+  label:           { fontSize: 14, marginBottom: 8 },
+  hint:            { fontSize: 12, marginTop: -10, marginBottom: 16 },
+  input:           { borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14, fontSize: 15, marginBottom: 16, borderWidth: 1 },
+  inputRow:        { flexDirection: 'row', alignItems: 'center', borderRadius: 10, paddingHorizontal: 16, marginBottom: 16, borderWidth: 1 },
+  inputFlex:       { flex: 1, paddingVertical: 14, fontSize: 15 },
+  pickerBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 16, borderWidth: 1 },
+  pickerBtnText:   { fontSize: 15, flex: 1 },
+  modalOverlay:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent:    { borderTopLeftRadius: 20, borderTopRightRadius: 20, borderWidth: 1, borderBottomWidth: 0, maxHeight: '50%' },
+  modalHeader:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, borderBottomWidth: 1 },
+  modalTitle:      { fontSize: 17, fontWeight: '700' },
+  niveauItem:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 18, borderBottomWidth: 1 },
+  niveauItemText:  { fontSize: 15 },
+  btnPrimary:      { paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8, marginBottom: 24 },
+  btnText:         { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+  loginRow:        { flexDirection: 'row', justifyContent: 'center' },
+  loginText:       { fontSize: 14 },
+  loginLink:       { fontSize: 14, fontWeight: '600' },
 });
 
 export default InscriptionEtudiantScreen;
