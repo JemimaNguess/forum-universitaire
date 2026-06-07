@@ -2,8 +2,8 @@ import React from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../components/theme';
-import { Ionicons } from '@expo/vector-icons'; 
 
 const ChoixRoleScreen = ({ navigation }) => {
   const c = useTheme();
@@ -34,7 +34,7 @@ const ChoixRoleScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('InscriptionEtudiant')}
         >
           <View style={[styles.roleIconContainer, { backgroundColor: c.card }]}>
-            <Ionicons name="school-outline" size={26} color={c.primary}/>
+            <Ionicons name="school-outline" size={26} color={c.primary} />
           </View>
           <View style={styles.roleInfo}>
             <Text style={[styles.roleTitle, { color: c.text }]}>Étudiant</Text>
@@ -49,7 +49,7 @@ const ChoixRoleScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('InscriptionEnseignant')}
         >
           <View style={[styles.roleIconContainer, { backgroundColor: c.card }]}>
-            <Ionicons name="person-outline" size={26} color={c.primary}/>
+            <Ionicons name="person-outline" size={26} color={c.primary} />
           </View>
           <View style={styles.roleInfo}>
             <Text style={[styles.roleTitle, { color: c.text }]}>Enseignant</Text>

@@ -3,9 +3,9 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   TextInput, ScrollView, ActivityIndicator
 } from 'react-native';
+import { useTheme, semantic } from '../../components/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { useTheme, semantic } from '../../components/theme';
 import { useAuth } from '../../context/AuthContext';
 
 const ConnexionScreen = ({ navigation }) => {
@@ -64,7 +64,7 @@ const ConnexionScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Email</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="jemima@gmail.com"
+        placeholder="jemima@email.com"
         placeholderTextColor={c.subtext}
         value={email}
         onChangeText={setEmail}
@@ -84,7 +84,7 @@ const ConnexionScreen = ({ navigation }) => {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={c.subtext}/>
+          <FontAwesome name={showPassword ? "eye-slash" : "eye"} size={20} color={c.subtext} />
         </TouchableOpacity>
       </View>
 
@@ -114,11 +114,15 @@ const ConnexionScreen = ({ navigation }) => {
 
       {/* Boutons sociaux */}
       <View style={styles.socialRow}>
-        <TouchableOpacity style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}>
-          <FontAwesome name="google" size={22} color="DB4437"/>
+        <TouchableOpacity
+          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        >
+          <FontAwesome name="google" size={22} color="#DB4437" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}>
-          <FontAwesome name="apple" size={22} color={c.text}/>
+        <TouchableOpacity
+          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        >
+          <FontAwesome name="apple" size={22} color={c.text} />
         </TouchableOpacity>
       </View>
 

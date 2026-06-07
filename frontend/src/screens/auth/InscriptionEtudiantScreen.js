@@ -10,11 +10,11 @@ import api from '../../services/api';
 
 const niveaux = [
   { label: "Sélectionner votre niveau d'étude", value: '', disabled: true },
-  { label: 'Licence 1 ', value: 'L1' },
-  { label: 'Licence 2 ', value: 'L2' },
-  { label: 'Licence 3 ', value: 'L3' },
-  { label: 'Master 1 ',  value: 'M1' },
-  { label: 'Master 2 ',  value: 'M2' },
+  { label: 'Licence 1 (L1)', value: 'L1' },
+  { label: 'Licence 2 (L2)', value: 'L2' },
+  { label: 'Licence 3 (L3)', value: 'L3' },
+  { label: 'Master 1 (M1)',  value: 'M1' },
+  { label: 'Master 2 (M2)',  value: 'M2' },
 ];
 
 const InscriptionEtudiantScreen = ({ navigation }) => {

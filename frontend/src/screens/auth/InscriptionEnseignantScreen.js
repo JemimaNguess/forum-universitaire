@@ -4,7 +4,7 @@ import {
   TextInput, ScrollView, ActivityIndicator
 } from 'react-native';
 import { useTheme, semantic } from '../../components/theme';
-import { Ionicons } from '@expo/vector-icons';
+import {Ionicons} from '@expo/vector-icons';
 import api from '../../services/api';
 
 const InscriptionEnseignantScreen = ({ navigation }) => {
@@ -83,8 +83,8 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
 
       {/* Info attente */}
       <View style={[styles.infoBox, { backgroundColor: c.card, borderColor: c.border }]}>
-        <Text style={[styles.infoText, { color: c.text }]}>
-          Votre compte sera soumis à validation par l'administrateur avant activation.
+        <Text style={[styles.infoText, { color: c.subtext }]}>
+          ℹ️ Votre compte sera soumis à validation par l'administrateur avant activation.
         </Text>
       </View>
 
@@ -119,7 +119,7 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Email *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="jemima@gmail.com"
+        placeholder="jemima@email.com"
         placeholderTextColor={c.subtext}
         value={email}
         onChangeText={setEmail}
@@ -159,8 +159,12 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
           onChangeText={setMotDePasse}
           secureTextEntry={!showPassword}
         />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={c.subtext}/>
+        <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+          <Ionicons
+            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 
@@ -176,7 +180,11 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
           secureTextEntry={!showConfirm}
         />
         <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-          <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={c.subtext}/>
+          <Ionicons
+            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 
@@ -214,7 +222,7 @@ const styles = StyleSheet.create({
   title:       { fontSize: 26, fontWeight: 'bold' },
   titleRole:   { fontSize: 18, marginBottom: 16 },
   infoBox:     { borderRadius: 10, padding: 12, marginBottom: 20, borderWidth: 1 },
-  infoText:    { fontSize: 19, lineHeight: 20 },
+  infoText:    { fontSize: 13, lineHeight: 20 },
   errorBox:    { borderRadius: 10, padding: 12, marginBottom: 16, borderWidth: 1 },
   errorText:   { fontSize: 14 },
   label:       { fontSize: 14, marginBottom: 8 },
