@@ -133,6 +133,12 @@ class AdminController extends Controller
             return response()->json(['message' => 'Impossible de supprimer un admin.'], 403);
         }
 
+        // Remettre le matricule disponible si c'est un étudiant
+        if ($user->hasRole('etudiant') && $user->matricule) {
+            \App\Models\EtudiantAutorise::where('matricule', $user->matricule)
+                ->update(['statut' => 'disponible']);
+        }
+
         $user->delete();
 
         return response()->json(['message' => 'Utilisateur supprimé.']);
