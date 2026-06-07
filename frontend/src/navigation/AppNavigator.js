@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../context/AuthContext';
 import { tabBar } from '../components/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 // ── Auth ──────────────────────────────────────
 import SplashScreen                from '../screens/auth/SplashScreen';
@@ -16,11 +17,12 @@ import VerificationEmailScreen     from '../screens/auth/VerificationEmailScreen
 import ConnexionScreen             from '../screens/auth/ConnexionScreen';
 
 // ── Admin ─────────────────────────────────────
-/*import DashboardScreen    from '../screens/admin/DashboardScreen';
+import DashboardScreen    from '../screens/admin/DashboardScreen';
 import UtilisateursScreen from '../screens/admin/UtilisateursScreen';
 import ValidationsScreen  from '../screens/admin/ValidationsScreen';
 import CategoriesScreen   from '../screens/admin/CategoriesScreen';
-import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';*/
+import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';
+import ImportScreen       from '../screens/admin/ImportScreen';
 
 // ── Écrans temporaires ────────────────────────
 const TempScreen = () => (
@@ -34,12 +36,29 @@ const Tab   = createBottomTabNavigator();
 
 // ── Navigation Admin ──────────────────────────
 const AdminTabs = () => (
-  <Tab.Navigator screenOptions={{
-    headerShown:             false,
-    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
-    tabBarActiveTintColor:   tabBar.activeTint,
-    tabBarInactiveTintColor: tabBar.inactiveTint,
-  }}>
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: tabBar.background,
+        borderTopColor:  tabBar.borderTop,
+        height:          60,
+        paddingBottom:   8,
+      },
+      tabBarActiveTintColor:   tabBar.activeTint,
+      tabBarInactiveTintColor: tabBar.inactiveTint,
+      tabBarIcon: ({ color, focused }) => {
+        const icons = {
+          Dashboard:    focused ? 'grid'             : 'grid-outline',
+          Utilisateurs: focused ? 'people'           : 'people-outline',
+          Validations:  focused ? 'checkmark-circle' : 'checkmark-circle-outline',
+          Categories:   focused ? 'book'             : 'book-outline',
+          Profil:       focused ? 'person'           : 'person-outline',
+        };
+        return <Ionicons name={icons[route.name]} size={22} color={color} />;
+      },
+    })}
+  >
     <Tab.Screen name="Dashboard"    component={DashboardScreen}    options={{ tabBarLabel: 'Dashboard' }} />
     <Tab.Screen name="Utilisateurs" component={UtilisateursScreen} options={{ tabBarLabel: 'Utilisateurs' }} />
     <Tab.Screen name="Validations"  component={ValidationsScreen}  options={{ tabBarLabel: 'Validations' }} />
@@ -50,12 +69,29 @@ const AdminTabs = () => (
 
 // ── Navigation Enseignant ─────────────────────
 const EnseignantTabs = () => (
-  <Tab.Navigator screenOptions={{
-    headerShown:             false,
-    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
-    tabBarActiveTintColor:   tabBar.activeTint,
-    tabBarInactiveTintColor: tabBar.inactiveTint,
-  }}>
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: tabBar.background,
+        borderTopColor:  tabBar.borderTop,
+        height:          60,
+        paddingBottom:   8,
+      },
+      tabBarActiveTintColor:   tabBar.activeTint,
+      tabBarInactiveTintColor: tabBar.inactiveTint,
+      tabBarIcon: ({ color, focused }) => {
+        const icons = {
+          Accueil:    focused ? 'home'          : 'home-outline',
+          Ressources: focused ? 'library'       : 'library-outline',
+          Moderation: focused ? 'shield'        : 'shield-outline',
+          Notifs:     focused ? 'notifications' : 'notifications-outline',
+          Profil:     focused ? 'person'        : 'person-outline',
+        };
+        return <Ionicons name={icons[route.name]} size={22} color={color} />;
+      },
+    })}
+  >
     <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
     <Tab.Screen name="Ressources" component={TempScreen} options={{ tabBarLabel: 'Ressources' }} />
     <Tab.Screen name="Moderation" component={TempScreen} options={{ tabBarLabel: 'Modération' }} />
@@ -66,12 +102,29 @@ const EnseignantTabs = () => (
 
 // ── Navigation Étudiant ───────────────────────
 const EtudiantTabs = () => (
-  <Tab.Navigator screenOptions={{
-    headerShown:             false,
-    tabBarStyle:             { backgroundColor: tabBar.background, borderTopColor: tabBar.borderTop },
-    tabBarActiveTintColor:   tabBar.activeTint,
-    tabBarInactiveTintColor: tabBar.inactiveTint,
-  }}>
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: tabBar.background,
+        borderTopColor:  tabBar.borderTop,
+        height:          60,
+        paddingBottom:   8,
+      },
+      tabBarActiveTintColor:   tabBar.activeTint,
+      tabBarInactiveTintColor: tabBar.inactiveTint,
+      tabBarIcon: ({ color, focused }) => {
+        const icons = {
+          Accueil:    focused ? 'home'          : 'home-outline',
+          Categories: focused ? 'book'          : 'book-outline',
+          Creer:      focused ? 'add-circle'    : 'add-circle-outline',
+          Notifs:     focused ? 'notifications' : 'notifications-outline',
+          Profil:     focused ? 'person'        : 'person-outline',
+        };
+        return <Ionicons name={icons[route.name]} size={22} color={color} />;
+      },
+    })}
+  >
     <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
     <Tab.Screen name="Categories" component={TempScreen} options={{ tabBarLabel: 'Catégories' }} />
     <Tab.Screen name="Creer"      component={TempScreen} options={{ tabBarLabel: 'Créer' }} />
@@ -97,19 +150,28 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <>
-            <Stack.Screen name="Splash"                  component={SplashScreen} />
-            <Stack.Screen name="Accueil"                 component={AccueilScreen} />
-            <Stack.Screen name="ChoixRole"               component={ChoixRoleScreen} />
-            <Stack.Screen name="InscriptionEtudiant"     component={InscriptionEtudiantScreen} />
-            <Stack.Screen name="InscriptionEnseignant"   component={InscriptionEnseignantScreen} />
-            <Stack.Screen name="VerificationEmail"       component={VerificationEmailScreen} />
-            <Stack.Screen name="Connexion"               component={ConnexionScreen} />
+            <Stack.Screen name="Splash"                component={SplashScreen} />
+            <Stack.Screen name="Accueil"               component={AccueilScreen} />
+            <Stack.Screen name="ChoixRole"             component={ChoixRoleScreen} />
+            <Stack.Screen name="InscriptionEtudiant"   component={InscriptionEtudiantScreen} />
+            <Stack.Screen name="InscriptionEnseignant" component={InscriptionEnseignantScreen} />
+            <Stack.Screen name="VerificationEmail"     component={VerificationEmailScreen} />
+            <Stack.Screen name="Connexion"             component={ConnexionScreen} />
           </>
         ) : (
           <>
-            {user?.role === 'admin'      && <Stack.Screen name="AdminTabs"      component={AdminTabs} />}
-            {user?.role === 'enseignant' && <Stack.Screen name="EnseignantTabs" component={EnseignantTabs} />}
-            {user?.role === 'etudiant'   && <Stack.Screen name="EtudiantTabs"   component={EtudiantTabs} />}
+            {user?.role === 'admin' && (
+              <>
+                <Stack.Screen name="AdminTabs" component={AdminTabs} />
+                <Stack.Screen name="Import"    component={ImportScreen} />
+              </>
+            )}
+            {user?.role === 'enseignant' && (
+              <Stack.Screen name="EnseignantTabs" component={EnseignantTabs} />
+            )}
+            {user?.role === 'etudiant' && (
+              <Stack.Screen name="EtudiantTabs" component={EtudiantTabs} />
+            )}
           </>
         )}
       </Stack.Navigator>

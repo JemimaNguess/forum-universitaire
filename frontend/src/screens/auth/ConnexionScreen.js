@@ -4,6 +4,8 @@ import {
   TextInput, ScrollView, ActivityIndicator
 } from 'react-native';
 import { useTheme, semantic } from '../../components/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 
 const ConnexionScreen = ({ navigation }) => {
@@ -82,7 +84,7 @@ const ConnexionScreen = ({ navigation }) => {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+          <FontAwesome name={showPassword ? "eye-slash" : "eye"} size={20} color={c.subtext} />
         </TouchableOpacity>
       </View>
 
@@ -112,11 +114,15 @@ const ConnexionScreen = ({ navigation }) => {
 
       {/* Boutons sociaux */}
       <View style={styles.socialRow}>
-        <TouchableOpacity style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}>
-          <Text style={[styles.socialIcon, { color: c.text }]}>G</Text>
+        <TouchableOpacity
+          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        >
+          <FontAwesome name="google" size={22} color="#DB4437" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}>
-          <Text style={[styles.socialIcon, { color: c.text }]}>🍎</Text>
+        <TouchableOpacity
+          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        >
+          <FontAwesome name="apple" size={22} color={c.text} />
         </TouchableOpacity>
       </View>
 

@@ -4,6 +4,7 @@ import {
   TextInput, ScrollView, ActivityIndicator
 } from 'react-native';
 import { useTheme, semantic } from '../../components/theme';
+import {Ionicons} from '@expo/vector-icons';
 import api from '../../services/api';
 
 const InscriptionEnseignantScreen = ({ navigation }) => {
@@ -158,8 +159,12 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
           onChangeText={setMotDePasse}
           secureTextEntry={!showPassword}
         />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+        <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+          <Ionicons
+            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 
@@ -175,7 +180,11 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
           secureTextEntry={!showConfirm}
         />
         <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-          <Text style={styles.eyeIcon}>{showConfirm ? '🙈' : '👁️'}</Text>
+          <Ionicons
+            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={c.subtext}
+          />
         </TouchableOpacity>
       </View>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../components/theme';
 
 const ChoixRoleScreen = ({ navigation }) => {
@@ -33,7 +34,7 @@ const ChoixRoleScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('InscriptionEtudiant')}
         >
           <View style={[styles.roleIconContainer, { backgroundColor: c.card }]}>
-            <Text style={styles.roleIcon}>🎓</Text>
+            <Ionicons name="school-outline" size={26} color={c.primary} />
           </View>
           <View style={styles.roleInfo}>
             <Text style={[styles.roleTitle, { color: c.text }]}>Étudiant</Text>
@@ -48,7 +49,7 @@ const ChoixRoleScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('InscriptionEnseignant')}
         >
           <View style={[styles.roleIconContainer, { backgroundColor: c.card }]}>
-            <Text style={styles.roleIcon}>👨‍🏫</Text>
+            <Ionicons name="person-outline" size={26} color={c.primary} />
           </View>
           <View style={styles.roleInfo}>
             <Text style={[styles.roleTitle, { color: c.text }]}>Enseignant</Text>
