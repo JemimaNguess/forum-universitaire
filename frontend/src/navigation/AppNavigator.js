@@ -24,6 +24,15 @@ import CategoriesScreen   from '../screens/admin/CategoriesScreen';
 import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';
 import ImportScreen       from '../screens/admin/ImportScreen';
 
+// ── Étudiant ──────────────────────────────────
+import AccueilEtudiantScreen  from '../screens/etudiant/AccueilScreen';
+import CategoriesEtudiantScreen from '../screens/etudiant/CategoriesScreen';
+import SujetsScreen           from '../screens/etudiant/SujetsScreen';
+import SujetDetailScreen      from '../screens/etudiant/SujetDetailScreen';
+import CreerSujetScreen       from '../screens/etudiant/CreerSujetScreen';
+import NotificationsEtudiantScreen from '../screens/etudiant/NotificationsScreen';
+import ProfilEtudiantScreen   from '../screens/etudiant/ProfilScreen';
+
 // ── Écrans temporaires ────────────────────────
 const TempScreen = () => (
   <View style={{ flex:1, backgroundColor:'#0F0A1E', justifyContent:'center', alignItems:'center' }}>
@@ -125,11 +134,11 @@ const EtudiantTabs = () => (
       },
     })}
   >
-    <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
-    <Tab.Screen name="Categories" component={TempScreen} options={{ tabBarLabel: 'Catégories' }} />
-    <Tab.Screen name="Creer"      component={TempScreen} options={{ tabBarLabel: 'Créer' }} />
-    <Tab.Screen name="Notifs"     component={TempScreen} options={{ tabBarLabel: 'Notifs' }} />
-    <Tab.Screen name="Profil"     component={TempScreen} options={{ tabBarLabel: 'Profil' }} />
+    <Tab.Screen name="Accueil"    component={AccueilEtudiantScreen}      options={{ tabBarLabel: 'Accueil' }} />
+    <Tab.Screen name="Categories" component={CategoriesEtudiantScreen}   options={{ tabBarLabel: 'Catégories' }} />
+    <Tab.Screen name="Creer"      component={CreerSujetScreen}           options={{ tabBarLabel: 'Créer' }} />
+    <Tab.Screen name="Notifs"     component={NotificationsEtudiantScreen} options={{ tabBarLabel: 'Notifs' }} />
+    <Tab.Screen name="Profil"     component={ProfilEtudiantScreen}       options={{ tabBarLabel: 'Profil' }} />
   </Tab.Navigator>
 );
 
@@ -170,7 +179,11 @@ const AppNavigator = () => {
               <Stack.Screen name="EnseignantTabs" component={EnseignantTabs} />
             )}
             {user?.role === 'etudiant' && (
-              <Stack.Screen name="EtudiantTabs" component={EtudiantTabs} />
+              <>
+                <Stack.Screen name="EtudiantTabs"  component={EtudiantTabs} />
+                <Stack.Screen name="Sujets"        component={SujetsScreen} />
+                <Stack.Screen name="SujetDetail"   component={SujetDetailScreen} />
+              </>
             )}
           </>
         )}
