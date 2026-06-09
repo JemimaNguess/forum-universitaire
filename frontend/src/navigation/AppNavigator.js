@@ -6,8 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../context/AuthContext';
 import { tabBar } from '../components/theme';
 import { Ionicons } from '@expo/vector-icons';
-
-// ── Auth ──────────────────────────────────────
+// auth
 import SplashScreen                from '../screens/auth/SplashScreen';
 import AccueilScreen               from '../screens/auth/AccueilScreen';
 import ChoixRoleScreen             from '../screens/auth/ChoixRoleScreen';
@@ -15,14 +14,19 @@ import InscriptionEtudiantScreen   from '../screens/auth/InscriptionEtudiantScre
 import InscriptionEnseignantScreen from '../screens/auth/InscriptionEnseignantScreen';
 import VerificationEmailScreen     from '../screens/auth/VerificationEmailScreen';
 import ConnexionScreen             from '../screens/auth/ConnexionScreen';
-
-// ── Admin ─────────────────────────────────────
+// admin
 import DashboardScreen    from '../screens/admin/DashboardScreen';
 import UtilisateursScreen from '../screens/admin/UtilisateursScreen';
 import ValidationsScreen  from '../screens/admin/ValidationsScreen';
 import CategoriesScreen   from '../screens/admin/CategoriesScreen';
 import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';
 import ImportScreen       from '../screens/admin/ImportScreen';
+// enseignant
+import AccueilEnseignantScreen from '../screens/enseignant/AccueilEnseignantScreen';
+import RessourcesEnseignantScreen from '../screens/enseignant/RessourcesEnseignantScreen';
+import ModerationEnseignantScreen from '../screens/enseignant/ModerationEnseignantScreen';
+import AnnoncesEnseignantScreen from '../screens/enseignant/AnnoncesEnseignantScreen';
+import ProfilEnseignantScreen from '../screens/enseignant/ProfilEnseignantScreen';
 
 // ── Écrans temporaires ────────────────────────
 const TempScreen = () => (
