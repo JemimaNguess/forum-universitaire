@@ -4,6 +4,7 @@ import {
   TextInput, ActivityIndicator
 } from 'react-native';
 import { useTheme, semantic } from '../../components/theme';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 
 const VerificationEmailScreen = ({ navigation, route }) => {
@@ -127,7 +128,7 @@ const VerificationEmailScreen = ({ navigation, route }) => {
       <View style={styles.timerRow}>
         <Text style={[styles.timerText, { color: c.subtext }]}>Code valide </Text>
         <Text style={[styles.timerCount, { color: c.primary }]}>{formatTimer()}</Text>
-        <Text style={[styles.timerText, { color: c.subtext }]}> ⏱</Text>
+        <Ionicons name="time-outline" size={16} color={c.subtext} />
       </View>
 
       {/* Bouton Vérifier */}

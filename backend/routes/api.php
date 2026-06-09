@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\CategorieController;
+use App\Http\Controllers\Api\Etudiant\SujetController;
+use App\Http\Controllers\Api\Etudiant\MessageController;
+use App\Http\Controllers\Api\Etudiant\VoteController;
 
 // ── Route non authentifié ─────────────────────
 Route::get('/unauthenticated', function () {
@@ -55,4 +58,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/categories/{id}',             [CategorieController::class, 'update']);
         Route::delete('/categories/{id}',          [CategorieController::class, 'destroy']);
     });
+
+    
+
+    // ── Routes Étudiant ───────────────────────────
+    Route::get('/sujets',                      [SujetController::class, 'index']);
+    Route::get('/sujets/{id}',                 [SujetController::class, 'show']);
+    Route::post('/sujets',                     [SujetController::class, 'store']);
+    Route::put('/sujets/{id}',                 [SujetController::class, 'update']);
+    Route::delete('/sujets/{id}',              [SujetController::class, 'destroy']);
+    Route::get('/categories/{id}/sujets',      [SujetController::class, 'parCategorie']);
+
+    Route::get('/sujets/{id}/messages',        [MessageController::class, 'index']);
+    Route::post('/sujets/{id}/messages',       [MessageController::class, 'store']);
+    Route::put('/messages/{id}',               [MessageController::class, 'update']);
+    Route::delete('/messages/{id}',            [MessageController::class, 'destroy']);
+
+    Route::post('/votes',                      [VoteController::class, 'voter']);
 });
