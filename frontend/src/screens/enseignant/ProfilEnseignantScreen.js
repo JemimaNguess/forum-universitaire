@@ -13,19 +13,30 @@ const infos = [
 ];
 
 const ProfilEnseignantScreen = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const theme = useTheme();
   const scheme = useColorScheme();
   const mode = scheme === 'dark' ? 'dark' : 'light';
+
+  const infos = [
+    ['Email', user?.email || 'Non défini'],
+    ['Département', user?.departement || 'Informatique'],
+    ['Matières', user?.matieres || 'À définir'],
+    ['Statut', user?.statut ? `Compte ${user.statut}` : 'Compte enseignant']
+  ];
+
+  const displayName = `${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Enseignant';
+  const initials = (user?.prenom?.[0] || user?.nom?.[0] || 'E').toUpperCase();
+  const roleLabel = user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}` : 'Enseignant';
 
   return (
     <TeacherScreen title="Profil" subtitle="Compte et préférences" rightIcon="settings-outline">
       <Card style={[local.profileCard, { backgroundColor: theme.card }] }>
         <View style={local.avatar}>
-          <Text style={local.avatarText}>MI</Text>
+          <Text style={local.avatarText}>{initials}</Text>
         </View>
-        <Text style={[local.name, { color: theme.text }]}>Mr Irie</Text>
-        <Text style={[local.role, { color: theme.subtext }]}>Enseignant · UIYA</Text>
+        <Text style={[local.name, { color: theme.text }]}>{displayName}</Text>
+        <Text style={[local.role, { color: theme.subtext }]}>{roleLabel} · UIYA</Text>
         <View style={[local.scoreBox, { backgroundColor: theme.surface }] }>
           <Ionicons name="star" size={18} color={theme.primary} />
           <Text style={[local.scoreText, { color: theme.text }]}>Réputation 4.8 · Badge Expert</Text>

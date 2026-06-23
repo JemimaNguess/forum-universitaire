@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -14,6 +14,10 @@ import InscriptionEtudiantScreen   from '../screens/auth/InscriptionEtudiantScre
 import InscriptionEnseignantScreen from '../screens/auth/InscriptionEnseignantScreen';
 import VerificationEmailScreen     from '../screens/auth/VerificationEmailScreen';
 import ConnexionScreen             from '../screens/auth/ConnexionScreen';
+import HistoriqueScreen     from '../screens/admin/HistoriqueScreen';
+import NotificationsScreen  from '../screens/admin/NotificationsScreen';
+import MotDePasseOublieScreen from '../screens/auth/MotDePasseOublieScreen';
+
 // admin
 import DashboardScreen    from '../screens/admin/DashboardScreen';
 import UtilisateursScreen from '../screens/admin/UtilisateursScreen';
@@ -34,13 +38,21 @@ import CategoriesEtudiantScreen from '../screens/etudiant/CategoriesScreen';
 import SujetsScreen           from '../screens/etudiant/SujetsScreen';
 import SujetDetailScreen      from '../screens/etudiant/SujetDetailScreen';
 import CreerSujetScreen       from '../screens/etudiant/CreerSujetScreen';
-import NotificationsEtudiantScreen from '../screens/etudiant/NotificationsScreen';
+import NotificationsEtudiantScreen from '../screens/admin/NotificationsScreen';
 import ProfilEtudiantScreen   from '../screens/etudiant/ProfilScreen';
 
 // ── Écrans temporaires ────────────────────────
 const TempScreen = () => (
   <View style={{ flex:1, backgroundColor:'#0F0A1E', justifyContent:'center', alignItems:'center' }}>
     <ActivityIndicator color="#A78BFA" />
+  </View>
+);
+
+const UnknownRoleScreen = () => (
+  <View style={{ flex:1, backgroundColor:'#0F0A1E', justifyContent:'center', alignItems:'center' }}>
+    <Text style={{ color:'#fff', fontSize:16, textAlign:'center', paddingHorizontal:24 }}>
+      Rôle utilisateur inconnu. Veuillez vous reconnecter ou contacter l'administration.
+    </Text>
   </View>
 );
 
@@ -92,7 +104,7 @@ const EnseignantTabs = () => (
         paddingBottom:   8,
       },
       tabBarActiveTintColor:   tabBar.activeTint,
-      tabBarInactiveTintColor: tabBar.inactiveTint,
+      tabBarInactiveTintColor: tabBar.inactiveTint, 
       tabBarIcon: ({ color, focused }) => {
         const icons = {
           Accueil:    focused ? 'home'          : 'home-outline',
@@ -105,11 +117,11 @@ const EnseignantTabs = () => (
       },
     })}
   >
-    <Tab.Screen name="Accueil"    component={TempScreen} options={{ tabBarLabel: 'Accueil' }} />
-    <Tab.Screen name="Ressources" component={TempScreen} options={{ tabBarLabel: 'Ressources' }} />
-    <Tab.Screen name="Moderation" component={TempScreen} options={{ tabBarLabel: 'Modération' }} />
-    <Tab.Screen name="Notifs"     component={TempScreen} options={{ tabBarLabel: 'Notifs' }} />
-    <Tab.Screen name="Profil"     component={TempScreen} options={{ tabBarLabel: 'Profil' }} />
+    <Tab.Screen name="Accueil"    component={AccueilEnseignantScreen}      options={{ tabBarLabel: 'Accueil' }} />
+    <Tab.Screen name="Ressources" component={RessourcesEnseignantScreen} options={{ tabBarLabel: 'Ressources' }} />
+    <Tab.Screen name="Moderation" component={ModerationEnseignantScreen} options={{ tabBarLabel: 'Modération' }} />
+    <Tab.Screen name="Notifs"     component={AnnoncesEnseignantScreen}     options={{ tabBarLabel: 'Notifs' }} />
+    <Tab.Screen name="Profil"     component={ProfilEnseignantScreen}      options={{ tabBarLabel: 'Profil' }} />
   </Tab.Navigator>
 );
 
@@ -160,7 +172,10 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        key={isAuthenticated ? 'authenticated' : 'unauthenticated'}
+        screenOptions={{ headerShown: false }}
+      >
         {!isAuthenticated ? (
           <>
             <Stack.Screen name="Splash"                component={SplashScreen} />
@@ -170,6 +185,8 @@ const AppNavigator = () => {
             <Stack.Screen name="InscriptionEnseignant" component={InscriptionEnseignantScreen} />
             <Stack.Screen name="VerificationEmail"     component={VerificationEmailScreen} />
             <Stack.Screen name="Connexion"             component={ConnexionScreen} />
+            <Stack.Screen name="MotDePasseOublie" component={MotDePasseOublieScreen} />
+            
           </>
         ) : (
           <>
@@ -177,6 +194,8 @@ const AppNavigator = () => {
               <>
                 <Stack.Screen name="AdminTabs" component={AdminTabs} />
                 <Stack.Screen name="Import"    component={ImportScreen} />
+                <Stack.Screen name="Historique"     component={HistoriqueScreen} />
+                <Stack.Screen name="Notifications"  component={NotificationsScreen} />
               </>
             )}
             {user?.role === 'enseignant' && (
@@ -188,6 +207,9 @@ const AppNavigator = () => {
                 <Stack.Screen name="Sujets"        component={SujetsScreen} />
                 <Stack.Screen name="SujetDetail"   component={SujetDetailScreen} />
               </>
+            )}
+            {!['admin','enseignant','etudiant'].includes(user?.role) && (
+              <Stack.Screen name="UnknownRole" component={UnknownRoleScreen} />
             )}
           </>
         )}

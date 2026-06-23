@@ -1,16 +1,15 @@
 {
-    "expo": {
-      "name": "Forum UIYA",
-      "slug": "forum-uiya",
-      "version": "1.0.0",
-      "orientation": "portrait",
-      "icon": "./assets/icon.png",
-      "userInterfaceStyle": "automatic",
-      "splash": {
-        "image": "./assets/splash.png",
-        "backgroundColor": "#0F0A1E"
-      },
-
+  "expo": {
+    "name": "Forum UIYA",
+    "slug": "forum-uiya",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "backgroundColor": "#0F0A1E"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -19,7 +18,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#7C3AED"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.moaye_jemima.forumuiya"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,6 +27,11 @@
     "plugins": [
       "expo-localization",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "26901e02-8964-4eb2-9b39-bb8ab6e7bc2e"
+      }
+    }
   }
 }

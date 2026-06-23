@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Categorie;
 use Illuminate\Support\Str;
+use App\Models\Historique;
 
 class CategorieController extends Controller
 {
@@ -45,6 +46,12 @@ class CategorieController extends Controller
             'user_id'     => $request->user()->id,
         ]);
 
+        Historique::logger(
+            'creation_categorie',
+            "Création de la catégorie {$categorie->nom}",
+            $request->user()->id
+        );
+
         return response()->json($categorie, 201);
     }
 
@@ -72,10 +79,17 @@ class CategorieController extends Controller
     }
 
     // ── Supprimer une catégorie ──────────────────
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $categorie = Categorie::findOrFail($id);
+        $nom = $categorie->nom;
         $categorie->delete();
+
+        Historique::logger(
+            'suppression_categorie',
+            "Suppression de la catégorie {$nom}",
+            $request->user()->id
+        );
 
         return response()->json(['message' => 'Catégorie supprimée.']);
     }

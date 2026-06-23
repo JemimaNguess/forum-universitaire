@@ -57,8 +57,10 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
       navigation.navigate('VerificationEmail', { email });
 
     } catch (err) {
-      const msg = err.response?.data?.message
-        || err.response?.data?.errors
+      const responseData = err.response?.data;
+      const msg = responseData?.message
+        || responseData?.errors
+        || err.message
         || 'Erreur lors de l\'inscription.';
       setError(typeof msg === 'object' ? Object.values(msg).flat().join('\n') : msg);
     } finally {
@@ -159,9 +161,9 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
           onChangeText={setMotDePasse}
           secureTextEntry={!showPassword}
         />
-        <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Ionicons
-            name={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+            name={showPassword ? 'eye-off-outline' : 'eye-outline'}
             size={20}
             color={c.subtext}
           />
@@ -170,7 +172,7 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
 
       {/* Confirmer mot de passe */}
       <Text style={[styles.label, { color: c.subtext }]}>Confirmer le mot de passe *</Text>
-      <View style={[styles.inputRow, { backgroundColor: c.card, borderColor: c.border }]}>
+      <View style={[styles.inputRow, { backgroundColor: c.card, borderColor: c.border }]}>        
         <TextInput
           style={[styles.inputFlex, { color: c.text }]}
           placeholder="••••••••"

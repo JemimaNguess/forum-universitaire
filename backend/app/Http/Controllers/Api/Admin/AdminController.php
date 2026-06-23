@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EtudiantAutorise;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Historique;
+
+
 
 class AdminController extends Controller
 {
@@ -86,7 +89,11 @@ class AdminController extends Controller
         ]);
 
         // TODO : envoyer email confirmation
-
+        Historique::logger(
+        'validation_enseignant',
+        "Validation du compte enseignant {$user->prenom} {$user->nom}",
+        $request->user()->id
+        );
         return response()->json(['message' => 'Enseignant validé avec succès.']);
     }
 
@@ -97,6 +104,12 @@ class AdminController extends Controller
         $user->update(['statut' => 'rejete']);
 
         // TODO : envoyer email de refus
+
+        Historique::logger(
+        'rejet_enseignant',
+        "Rejet du compte enseignant {$user->prenom} {$user->nom}",
+        $request->user()->id
+        );
 
         return response()->json(['message' => 'Enseignant rejeté.']);
     }
@@ -111,6 +124,12 @@ class AdminController extends Controller
         }
 
         $user->update(['statut' => 'rejete']);
+
+        Historique::logger(
+        'blocage_utilisateur',
+        "Blocage de l'utilisateur {$user->prenom} {$user->nom}",
+        $request->user()->id
+        );
 
         return response()->json(['message' => 'Utilisateur bloqué.']);
     }
@@ -139,6 +158,11 @@ class AdminController extends Controller
                 ->update(['statut' => 'disponible']);
         }
 
+        Historique::logger(
+        'suppression_utilisateur',
+        "Suppression de l'utilisateur {$user->prenom} {$user->nom}",
+        $request->user()->id
+        );
         $user->delete();
 
         return response()->json(['message' => 'Utilisateur supprimé.']);
@@ -241,4 +265,5 @@ class AdminController extends Controller
             'etudiants_inscrits'   => $inscrits,
         ]);
     }
+    
 }

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActionButton, Badge, Card, TeacherScreen, teacherColors } from './TeacherUi';
 import { useTheme } from '../../components/theme';
+import { useAuth } from '../../context/AuthContext';
 
 const stats = [
   { label: 'Ressources', value: '12', icon: 'library-outline' },
@@ -19,9 +20,11 @@ const today = [
 
 const AccueilEnseignantScreen = ({ navigation }) => {
   const theme = useTheme();
+  const { user } = useAuth();
+  const greetingName = `${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Enseignant';
 
   return (
-    <TeacherScreen title="Bonjour, Mr Irie" subtitle="Espace enseignant UIYA">
+    <TeacherScreen title={`Bonjour, ${greetingName}`} subtitle="Espace enseignant UIYA">
       <Card style={[local.hero, { backgroundColor: theme.primary }] }>
         <View style={local.heroText}>
           <Badge label="Semestre 2" />

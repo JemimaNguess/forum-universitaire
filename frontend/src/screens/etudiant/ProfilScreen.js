@@ -11,7 +11,7 @@ import api from '../../services/api';
 
 const ProfilScreen = () => {
   const c                = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
 
   const [reputation,    setReputation]    = useState(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -28,8 +28,13 @@ const ProfilScreen = () => {
   const load = async () => {
     try {
       const res = await api.get('/me');
-      // Réputation si disponible
-    } catch {}
+      const me = res.data;
+      if (me) {
+        updateUser(me);
+      }
+    } catch (err) {
+      console.log('Erreur chargement profil :', err.message || err);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -39,6 +44,8 @@ const ProfilScreen = () => {
     setError('');
     try {
       await api.put('/profile', { nom, prenom, bio });
+      const updatedUser = { ...user, nom, prenom, bio };
+      updateUser(updatedUser);
       setShowInfoModal(false);
       Alert.alert('Succès', 'Informations mises à jour.');
     } catch (err) {

@@ -38,15 +38,32 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Erreur de connexion'
+        message: error.response?.data?.message || error.message || 'Erreur de connexion'
       };
     }
   };
 
+  const updateUser = async (newUser) => {
+    try {
+      setUser(newUser);
+      await AsyncStorage.setItem('user', JSON.stringify(newUser));
+    } catch (error) {
+      console.log('Erreur mise à jour utilisateur :', error);
+    }
+  };
+
   const logout = async () => {
-    try { await api.post('/logout'); } catch {}
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('user');
+    try {
+      await api.post('/logout');
+    } catch (error) {
+      console.warn('Logout failed:', error.response?.data || error.message || error);
+    }
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+    } catch (storageError) {
+      console.warn('AsyncStorage clear failed:', storageError);
+    }
     setToken(null);
     setUser(null);
   };
@@ -54,6 +71,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       user, token, loading, login, logout,
+      updateUser,
       isAuthenticated: !!token,
     }}>
       {children}

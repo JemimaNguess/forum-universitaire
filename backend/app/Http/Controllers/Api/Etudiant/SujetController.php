@@ -117,4 +117,23 @@ class SujetController extends Controller
             'sujets'    => $sujets,
         ]);
     }
+
+    // ── Modifier le statut d'un sujet ────────────
+    public function updateStatut(Request $request, $id)
+    {
+        $sujet = Sujet::findOrFail($id);
+
+        $request->validate([
+            'statut' => 'required|in:ouvert,ferme,epingle',
+        ]);
+
+        if (!$request->user()->hasRole('enseignant') &&
+            !$request->user()->hasRole('admin')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
+
+        $sujet->update(['statut' => $request->statut]);
+
+        return response()->json(['message' => 'Statut mis à jour.', 'sujet' => $sujet]);
+    }
 }

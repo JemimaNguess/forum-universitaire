@@ -89,7 +89,7 @@ const ConnexionScreen = ({ navigation }) => {
       </View>
 
       {/* Mot de passe oublié */}
-      <TouchableOpacity style={styles.forgotBtn}>
+      <TouchableOpacity style={styles.forgotBtn} onPress={() => navigation.navigate('MotDePasseOublie')}>
         <Text style={[styles.forgotText, { color: c.primary }]}>Mot de passe oublié ?</Text>
       </TouchableOpacity>
 
