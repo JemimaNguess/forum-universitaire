@@ -31,13 +31,13 @@ const getApiHost = () => {
   return 'localhost';
 };
 
-const API_URL = `http://10.230.84.189:8000/api`;
+const API_URL = `http:172.20.10.7:8000/api`;
 console.log('[API] baseURL=', API_URL, 'expoHost=', getExpoHost());
 // Si tu utilises un vrai téléphone, ajoute "apiHost" dans app.json extra ou remplace ici par l'IP de ton PC.
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
     'Accept':       'application/json',

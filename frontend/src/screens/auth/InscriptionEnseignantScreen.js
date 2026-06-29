@@ -111,7 +111,7 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Prénom *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="Jemima"
+        placeholder="N'guessan"
         placeholderTextColor={c.subtext}
         value={prenom}
         onChangeText={setPrenom}
@@ -121,7 +121,7 @@ const InscriptionEnseignantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Email *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="jemima@email.com"
+        placeholder="jemima@gmail.com"
         placeholderTextColor={c.subtext}
         value={email}
         onChangeText={setEmail}

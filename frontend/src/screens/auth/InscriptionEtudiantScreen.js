@@ -8,13 +8,27 @@ import { useTheme, semantic } from '../../components/theme';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 
+const filiereOptions = [
+  { label: "Sélectionner votre filière", value: '', disabled: true },
+  { label: 'Informatique option Génie Logiciel', value: 'IGL' },
+  { label: 'Science Économique et de Gestion', value: 'SEG' },
+  { label: 'Management des Projets', value: 'MP' },
+  { label: 'Audit et Contrôle de Gestion', value: 'ACG' },
+  { label: 'Finance Comptabilité', value: 'FC' },
+  { label: 'Anglais', value: 'ANG' },
+  { label: 'Droit', value: 'DROIT' },
+  { label: 'Big Data', value: 'BD' },
+  { label: 'Communication JTV', value: 'IJTV' },
+  { label: 'Communication RH', value: 'IRH' },
+];
+
 const niveaux = [
   { label: "Sélectionner votre niveau d'étude", value: '', disabled: true },
-  { label: 'Licence 1 (L1)', value: 'L1' },
-  { label: 'Licence 2 (L2)', value: 'L2' },
-  { label: 'Licence 3 (L3)', value: 'L3' },
-  { label: 'Master 1 (M1)',  value: 'M1' },
-  { label: 'Master 2 (M2)',  value: 'M2' },
+  { label: 'Licence 1 ', value: 'L1' },
+  { label: 'Licence 2 ', value: 'L2' },
+  { label: 'Licence 3 ', value: 'L3' },
+  { label: 'Master 1 ',  value: 'M1' },
+  { label: 'Master 2 ',  value: 'M2' },
 ];
 
 const InscriptionEtudiantScreen = ({ navigation }) => {
@@ -32,9 +46,11 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
   const [showConfirm,         setShowConfirm]         = useState(false);
   const [loading,             setLoading]             = useState(false);
   const [error,               setError]               = useState('');
-  const [showPicker,          setShowPicker]          = useState(false);
+  const [showFilierePicker,   setShowFilierePicker]  = useState(false);
+  const [showNiveauPicker,    setShowNiveauPicker]   = useState(false);
 
   const niveauLabel = niveaux.find(n => n.value === niveau)?.label || "Sélectionner votre niveau d'étude";
+  const filiereLabel = filiereOptions.find(f => f.value === filiere)?.label || "Sélectionner votre filière";
 
   const handleInscription = async () => {
     setError('');
@@ -109,7 +125,7 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Prénom *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="Jemima"
+        placeholder="N'guessan"
         placeholderTextColor={c.subtext}
         value={prenom}
         onChangeText={setPrenom}
@@ -119,7 +135,7 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Email *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="jemima@email.com"
+        placeholder="jemima@gmail.com"
         placeholderTextColor={c.subtext}
         value={email}
         onChangeText={setEmail}
@@ -131,7 +147,7 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Matricule UIYA *</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="ex : NGUM1706070001"
+        placeholder="ex : XXXX1234567891"
         placeholderTextColor={c.subtext}
         value={matricule}
         onChangeText={setMatricule}
@@ -143,19 +159,65 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
 
       {/* Filière */}
       <Text style={[styles.label, { color: c.subtext }]}>Filière *</Text>
-      <TextInput
-        style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="ex : Génie Logiciel"
-        placeholderTextColor={c.subtext}
-        value={filiere}
-        onChangeText={setFiliere}
-      />
+      <TouchableOpacity
+        style={[styles.pickerBtn, { backgroundColor: c.card, borderColor: c.border }]}
+        onPress={() => setShowFilierePicker(true)}
+      >
+        <Text style={[styles.pickerBtnText, { color: filiere ? c.text : c.subtext }]}>
+          {filiereLabel}
+        </Text>
+        <Ionicons name="chevron-down" size={18} color={c.subtext} />
+      </TouchableOpacity>
+
+
+      {/* Modal Picker */}
+      <Modal
+        visible={showFilierePicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowFilierePicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
+              <Text style={[styles.modalTitle, { color: c.text }]}>Filière</Text>
+              <TouchableOpacity onPress={() => setShowFilierePicker(false)}>
+                <Ionicons name="close" size={24} color={c.subtext} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={filiereOptions.filter(f => !f.disabled)}
+              keyExtractor={item => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.niveauItem,
+                    { borderBottomColor: c.border },
+                    filiere === item.value && { backgroundColor: c.card }
+                  ]}
+                  onPress={() => {
+                    setFiliere(item.value);
+                    setShowFilierePicker(false);
+                  }}
+                >
+                  <Text style={[styles.niveauItemText, { color: c.text }]}>
+                    {item.label}
+                  </Text>
+                  {filiere === item.value && (
+                    <Ionicons name="checkmark" size={20} color={c.primary} />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
 
       {/* Niveau */}
       <Text style={[styles.label, { color: c.subtext }]}>Niveau *</Text>
       <TouchableOpacity
         style={[styles.pickerBtn, { backgroundColor: c.card, borderColor: c.border }]}
-        onPress={() => setShowPicker(true)}
+        onPress={() => setShowNiveauPicker(true)}
       >
         <Text style={[styles.pickerBtnText, { color: niveau ? c.text : c.subtext }]}>
           {niveauLabel}
@@ -165,16 +227,16 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
 
       {/* Modal Picker */}
       <Modal
-        visible={showPicker}
+        visible={showNiveauPicker}
         transparent
         animationType="slide"
-        onRequestClose={() => setShowPicker(false)}
+        onRequestClose={() => setShowNiveauPicker(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: c.surface, borderColor: c.border }]}>
             <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
               <Text style={[styles.modalTitle, { color: c.text }]}>Niveau d'étude</Text>
-              <TouchableOpacity onPress={() => setShowPicker(false)}>
+              <TouchableOpacity onPress={() => setShowNiveauPicker(false)}>
                 <Ionicons name="close" size={24} color={c.subtext} />
               </TouchableOpacity>
             </View>
@@ -190,7 +252,7 @@ const InscriptionEtudiantScreen = ({ navigation }) => {
                   ]}
                   onPress={() => {
                     setNiveau(item.value);
-                    setShowPicker(false);
+                    setShowNiveauPicker(false);
                   }}
                 >
                   <Text style={[styles.niveauItemText, { color: c.text }]}>

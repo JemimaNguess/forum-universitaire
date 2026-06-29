@@ -111,8 +111,8 @@ const ProfilScreen = () => {
   const menuItems = [
     { icon: 'person-outline',      label: 'Informations personnelles', onPress: () => { setError(''); setShowInfoModal(true); } },
     { icon: 'lock-closed-outline', label: 'Changer le mot de passe',   onPress: () => { setError(''); setShowPassModal(true); } },
-    { icon: 'notifications-outline', label: 'Notifications',           onPress: () => Alert.alert('Bientôt', 'Disponible prochainement.') },
-    { icon: 'shield-outline',      label: 'Sécurité',                  onPress: () => Alert.alert('Bientôt', 'Disponible prochainement.') },
+    { icon: 'shield-outline',        label: 'Sécurité',                  onPress: () => navigation.navigate('SecuriteEtudiant') },
+    { icon: 'notifications-outline', label: 'Notifications',             onPress: () => navigation.navigate('NotificationsEtudiant') },
   ];
 
   return (

@@ -75,6 +75,7 @@ const DashboardScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.iconBtn, { backgroundColor: c.card, borderColor: c.border }]}
+            onPress={() => navigation.navigate('Messagerie')}
           >
             <Ionicons name="chatbubble-outline" size={20} color={c.primary} />
           </TouchableOpacity>
@@ -107,6 +108,7 @@ const DashboardScreen = ({ navigation }) => {
           { label: 'Catégories',   icon: 'book-outline',             route: 'Categories'   },
           { label: 'Profil',       icon: 'person-outline',           route: 'Profil'       },
           { label: 'Import Excel', icon: 'cloud-upload-outline',     route: 'Import'       },
+          { label: 'Assistant IA', icon: 'sparkles-outline', route: 'IA' },
         ].map(item => (
           <TouchableOpacity
             key={item.label}

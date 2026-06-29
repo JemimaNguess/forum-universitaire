@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2adb47c37b85d853d99f4e73d8c5e527a8bc295f',
+        'reference' => 'a2f88edc7ad805ebf3b1c3b34e887004f051ec6b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -136,6 +136,24 @@
             'reference' => '38aaa6c3fd4c157ffe2a4d10aa8b9b16ba8de379',
             'type' => 'library',
             'install_path' => __DIR__ . '/../fruitcake/php-cors',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'google-gemini-php/client' => array(
+            'pretty_version' => '2.7.4',
+            'version' => '2.7.4.0',
+            'reference' => 'd61ebe8e8f7acc2aa66ce2e8a57c23bf32e1e340',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../google-gemini-php/client',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'google-gemini-php/laravel' => array(
+            'pretty_version' => '2.0.4',
+            'version' => '2.0.4.0',
+            'reference' => '39cd52d8ed6ffdb8fe17ed3e9b74773f2c41f875',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../google-gemini-php/laravel',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -436,7 +454,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2adb47c37b85d853d99f4e73d8c5e527a8bc295f',
+            'reference' => 'a2f88edc7ad805ebf3b1c3b34e887004f051ec6b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -709,6 +727,27 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'php-http/async-client-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '*',
+            ),
+        ),
+        'php-http/client-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '*',
+            ),
+        ),
+        'php-http/discovery' => array(
+            'pretty_version' => '1.20.0',
+            'version' => '1.20.0.0',
+            'reference' => '82fe4c73ef3363caed49ff8dd1539ba06044910d',
+            'type' => 'composer-plugin',
+            'install_path' => __DIR__ . '/../php-http/discovery',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'phpmailer/phpmailer' => array(
             'pretty_version' => 'v7.1.1',
             'version' => '7.1.1.0',
@@ -847,7 +886,8 @@
         'psr/http-client-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'psr/http-factory' => array(
@@ -862,7 +902,8 @@
         'psr/http-factory-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'psr/http-message' => array(
@@ -877,7 +918,8 @@
         'psr/http-message-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'psr/log' => array(

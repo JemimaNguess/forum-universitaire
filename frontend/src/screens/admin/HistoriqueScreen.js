@@ -64,15 +64,11 @@ const HistoriqueScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: c.background }]}>
 
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: c.surface, borderBottomColor: c.border }]}>
         <Text style={[styles.headerTitle, { color: c.text }]}>Historique</Text>
-        <Text style={[styles.headerCount, { color: c.subtext }]}>
-          {historique.length} actions
-        </Text>
+        <Text style={[styles.headerCount, { color: c.subtext }]}>{historique.length} actions</Text>
       </View>
 
-      {/* Filtres */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -99,35 +95,25 @@ const HistoriqueScreen = () => {
         ))}
       </ScrollView>
 
-      {/* Liste */}
       <ScrollView
         contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={c.primary} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={c.primary} />}
       >
         {historique.length === 0 ? (
           <View style={styles.empty}>
             <Ionicons name="time-outline" size={48} color={c.subtext} />
-            <Text style={[styles.emptyText, { color: c.subtext }]}>
-              Aucune action enregistrée
-            </Text>
+            <Text style={[styles.emptyText, { color: c.subtext }]}>Aucune action enregistrée</Text>
           </View>
         ) : (
           historique.map(item => {
             const icone = getIcone(item.action);
             return (
-              <View
-                key={item.id}
-                style={[styles.itemCard, { backgroundColor: c.surface, borderColor: c.border }]}
-              >
+              <View key={item.id} style={[styles.itemCard, { backgroundColor: c.surface, borderColor: c.border }]}>
                 <View style={[styles.itemIcon, { backgroundColor: c.card }]}>
                   <Ionicons name={icone.name} size={18} color={icone.color} />
                 </View>
                 <View style={styles.itemInfo}>
-                  <Text style={[styles.itemDesc, { color: c.text }]}>
-                    {item.description}
-                  </Text>
+                  <Text style={[styles.itemDesc, { color: c.text }]}>{item.description}</Text>
                   <Text style={[styles.itemMeta, { color: c.subtext }]}>
                     {item.admin?.prenom} {item.admin?.nom} · {new Date(item.created_at).toLocaleString('fr-FR')}
                   </Text>

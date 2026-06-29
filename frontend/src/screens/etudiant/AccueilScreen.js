@@ -58,7 +58,7 @@ const AccueilScreen = ({ navigation }) => {
         <View>
           <Text style={[styles.greeting, { color: c.subtext }]}>Bonjour,</Text>
           <Text style={[styles.name, { color: c.text }]}>
-            {user?.prenom} {user?.nom} 👋
+            {user?.prenom} {user?.nom} 
           </Text>
         </View>
         <View style={styles.headerIcons}>
@@ -68,6 +68,12 @@ const AccueilScreen = ({ navigation }) => {
           >
             <Ionicons name="notifications-outline" size={20} color={c.primary} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: c.card, borderColor: c.border }]}
+            onPress={() => navigation.navigate('Messagerie')}
+          >
+            <Ionicons name="chatbubble-outline" size={20} color={c.primary} />
+          </TouchableOpacity>       
         </View>
       </View>
 

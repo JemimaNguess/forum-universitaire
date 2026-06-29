@@ -96,4 +96,16 @@ class MessageController extends Controller
 
         return response()->json(['message' => 'Message supprimé.']);
     }
+
+    // ── Utilisateurs disponibles pour messagerie ──
+    public function utilisateursDispo(Request $request)
+    {
+        $users = \App\Models\User::where('id', '!=', $request->user()->id)
+                    ->where('statut', 'actif')
+                    ->select('id', 'nom', 'prenom', 'email', 'role')
+                    ->orderBy('prenom')
+                    ->get();
+
+        return response()->json($users);
+    }
 }

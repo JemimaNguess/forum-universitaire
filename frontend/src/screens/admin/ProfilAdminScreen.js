@@ -83,13 +83,13 @@ const ProfilAdminScreen = ({navigation}) => {
   };
 
   const menuItems = [
-    { icon: 'person-outline',        label: 'Informations personnelles', onPress: () => { setError(''); setShowInfoModal(true); } },
-    { icon: 'lock-closed-outline',   label: 'Changer le mot de passe',   onPress: () => { setError(''); setShowPassModal(true); } },
-    { icon: 'settings-outline',      label: 'Paramètres',                onPress: () => Alert.alert('Bientôt', 'Disponible prochainement.') },
-    { icon: 'shield-outline',        label: 'Sécurité',                  onPress: () => Alert.alert('Bientôt', 'Disponible prochainement.') },
-    { icon: 'notifications-outline', label: 'Notifications',             onPress: () => Alert.alert('Bientôt', 'Disponible prochainement.') },
-    { icon: 'time-outline', label: 'Historique des actions', onPress: () => navigation.navigate('Historique') },
-  ];
+  { icon: 'person-outline',        label: 'Informations personnelles', onPress: () => { setError(''); setShowInfoModal(true); } },
+  { icon: 'lock-closed-outline',   label: 'Changer le mot de passe',   onPress: () => { setError(''); setShowPassModal(true); } },
+  { icon: 'settings-outline',      label: 'Paramètres',                onPress: () => navigation.navigate('Parametres') },
+  { icon: 'shield-outline',        label: 'Sécurité',                  onPress: () => navigation.navigate('Securite') },
+  { icon: 'notifications-outline', label: 'Notifications',             onPress: () => navigation.navigate('Notifications') },
+  { icon: 'time-outline',          label: 'Historique des actions',    onPress: () => navigation.navigate('Historique') },
+];
 
   return (
     <ScrollView

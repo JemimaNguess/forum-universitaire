@@ -64,7 +64,7 @@ const ConnexionScreen = ({ navigation }) => {
       <Text style={[styles.label, { color: c.subtext }]}>Email</Text>
       <TextInput
         style={[styles.input, { backgroundColor: c.card, borderColor: c.border, color: c.text }]}
-        placeholder="jemima@email.com"
+        placeholder="jemima@gmail.com"
         placeholderTextColor={c.subtext}
         value={email}
         onChangeText={setEmail}
@@ -89,7 +89,10 @@ const ConnexionScreen = ({ navigation }) => {
       </View>
 
       {/* Mot de passe oublié */}
-      <TouchableOpacity style={styles.forgotBtn} onPress={() => navigation.navigate('MotDePasseOublie')}>
+      <TouchableOpacity
+        style={styles.forgotBtn}
+        onPress={() => navigation.navigate('MotDePasseOublie')}
+      >
         <Text style={[styles.forgotText, { color: c.primary }]}>Mot de passe oublié ?</Text>
       </TouchableOpacity>
 
@@ -105,26 +108,6 @@ const ConnexionScreen = ({ navigation }) => {
         }
       </TouchableOpacity>
 
-      {/* Séparateur */}
-      <View style={styles.separatorRow}>
-        <View style={[styles.separatorLine, { backgroundColor: c.border }]} />
-        <Text style={[styles.separatorText, { color: c.subtext }]}>Ou continuer avec</Text>
-        <View style={[styles.separatorLine, { backgroundColor: c.border }]} />
-      </View>
-
-      {/* Boutons sociaux */}
-      <View style={styles.socialRow}>
-        <TouchableOpacity
-          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
-        >
-          <FontAwesome name="google" size={22} color="#DB4437" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.socialBtn, { backgroundColor: c.card, borderColor: c.border }]}
-        >
-          <FontAwesome name="apple" size={22} color={c.text} />
-        </TouchableOpacity>
-      </View>
 
       {/* Lien inscription */}
       <View style={styles.registerRow}>

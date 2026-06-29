@@ -14,8 +14,6 @@ import InscriptionEtudiantScreen   from '../screens/auth/InscriptionEtudiantScre
 import InscriptionEnseignantScreen from '../screens/auth/InscriptionEnseignantScreen';
 import VerificationEmailScreen     from '../screens/auth/VerificationEmailScreen';
 import ConnexionScreen             from '../screens/auth/ConnexionScreen';
-import HistoriqueScreen     from '../screens/admin/HistoriqueScreen';
-import NotificationsScreen  from '../screens/admin/NotificationsScreen';
 import MotDePasseOublieScreen from '../screens/auth/MotDePasseOublieScreen';
 
 // admin
@@ -25,6 +23,15 @@ import ValidationsScreen  from '../screens/admin/ValidationsScreen';
 import CategoriesScreen   from '../screens/admin/CategoriesScreen';
 import ProfilAdminScreen  from '../screens/admin/ProfilAdminScreen';
 import ImportScreen       from '../screens/admin/ImportScreen';
+import HistoriqueScreen        from '../screens/admin/HistoriqueScreen';
+import NotificationsScreen     from '../screens/admin/NotificationsScreen';
+import ParametresScreen        from '../screens/admin/ParametresScreen';
+import SecuriteScreen          from '../screens/admin/SecuriteScreen';
+import MessagerieScreen        from '../screens/admin/MessagerieScreen';
+import ConversationScreen      from '../screens/admin/ConversationScreen';
+import InfoConversationScreen  from '../screens/admin/InfoConversationScreen';
+import IAScreenAdmin           from '../screens/admin/IAScreen';
+
 // enseignant
 import AccueilEnseignantScreen from '../screens/enseignant/AccueilEnseignantScreen';
 import RessourcesEnseignantScreen from '../screens/enseignant/RessourcesEnseignantScreen';
@@ -40,6 +47,10 @@ import SujetDetailScreen      from '../screens/etudiant/SujetDetailScreen';
 import CreerSujetScreen       from '../screens/etudiant/CreerSujetScreen';
 import NotificationsEtudiantScreen from '../screens/admin/NotificationsScreen';
 import ProfilEtudiantScreen   from '../screens/etudiant/ProfilScreen';
+import ConversationEtudiantScreen from '../screens/etudiant/ConversationEtudiantScreen';
+import InfoConversationEtudiantScreen from '../screens/etudiant/InfoConversationEtudiantScreen';
+import MessagerieEtudiantScreen from '../screens/etudiant/MessagerieEtudiantScreen';
+
 
 // ── Écrans temporaires ────────────────────────
 const TempScreen = () => (
@@ -192,10 +203,16 @@ const AppNavigator = () => {
           <>
             {user?.role === 'admin' && (
               <>
-                <Stack.Screen name="AdminTabs" component={AdminTabs} />
-                <Stack.Screen name="Import"    component={ImportScreen} />
-                <Stack.Screen name="Historique"     component={HistoriqueScreen} />
-                <Stack.Screen name="Notifications"  component={NotificationsScreen} />
+                <Stack.Screen name="AdminTabs"         component={AdminTabs} />
+                <Stack.Screen name="Import"            component={ImportScreen} />
+                <Stack.Screen name="Historique"        component={HistoriqueScreen} />
+                <Stack.Screen name="Notifications"     component={NotificationsScreen} />
+                <Stack.Screen name="Parametres"        component={ParametresScreen} />
+                <Stack.Screen name="Securite"          component={SecuriteScreen} />
+                <Stack.Screen name="Messagerie"        component={MessagerieScreen} />
+                <Stack.Screen name="Conversation"      component={ConversationScreen} />
+                <Stack.Screen name="InfoConversation"  component={InfoConversationScreen} />
+                <Stack.Screen name="IA"                component={IAScreenAdmin} />
               </>
             )}
             {user?.role === 'enseignant' && (
@@ -206,6 +223,11 @@ const AppNavigator = () => {
                 <Stack.Screen name="EtudiantTabs"  component={EtudiantTabs} />
                 <Stack.Screen name="Sujets"        component={SujetsScreen} />
                 <Stack.Screen name="SujetDetail"   component={SujetDetailScreen} />
+                <Stack.Screen name="Messagerie"        component={MessagerieEtudiantScreen} />
+                <Stack.Screen name="Conversation"      component={ConversationEtudiantScreen} />
+                <Stack.Screen name="InfoConversation"  component={InfoConversationEtudiantScreen} />
+                <Stack.Screen name="Notifications"     component={NotificationsEtudiantScreen} />
+                <Stack.Screen name="Securite"          component={SecuriteEtudiantScreen} />
               </>
             )}
             {!['admin','enseignant','etudiant'].includes(user?.role) && (
