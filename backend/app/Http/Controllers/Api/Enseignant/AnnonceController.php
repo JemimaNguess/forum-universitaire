@@ -27,6 +27,12 @@ class AnnonceController extends Controller
     // ── Créer une annonce ────────────────────────
     public function store(Request $request)
     {
+        $user = $request->user();
+
+        if (!$user->hasRole('enseignant') && !$user->hasRole('admin')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
+
         $request->validate([
             'titre'     => 'required|string|max:255',
             'contenu'   => 'required|string',
@@ -55,6 +61,10 @@ class AnnonceController extends Controller
     {
         $annonce = Annonce::findOrFail($id);
 
+        if (!$request->user()->hasRole('enseignant') && !$request->user()->hasRole('admin')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
+
         if ($annonce->auteur_id !== $request->user()->id &&
             !$request->user()->hasRole('admin')) {
             return response()->json(['message' => 'Non autorisé.'], 403);
@@ -79,6 +89,10 @@ class AnnonceController extends Controller
     public function destroy(Request $request, $id)
     {
         $annonce = Annonce::findOrFail($id);
+
+        if (!$request->user()->hasRole('enseignant') && !$request->user()->hasRole('admin')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
 
         if ($annonce->auteur_id !== $request->user()->id &&
             !$request->user()->hasRole('admin')) {

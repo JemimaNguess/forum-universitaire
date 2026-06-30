@@ -1,30 +1,84 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActionButton, Badge, Card, TeacherScreen, teacherColors } from './TeacherUi';
 import { useTheme } from '../../components/theme';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 
-const stats = [
-  { label: 'Ressources', value: '12', icon: 'library-outline' },
-  { label: 'Sujets suivis', value: '08', icon: 'chatbubbles-outline' },
-  { label: 'Signalements', value: '03', icon: 'flag-outline' },
-  { label: 'Annonces', value: '05', icon: 'megaphone-outline' },
-];
-
-const today = [
-  { title: 'Arbres binaires', meta: 'Programmation · 24 réponses', state: 'Épinglé' },
-  { title: 'Devoir noté - Algorithmes', meta: 'Algorithmique · échéance vendredi', state: 'Actif' },
-  { title: 'Support de cours SQL', meta: 'Base de données · PDF publié', state: 'Nouveau' },
+const initialStats = [
+  { label: 'Ressources', value: '0', icon: 'library-outline' },
+  { label: 'Sujets suivis', value: '0', icon: 'chatbubbles-outline' },
+  { label: 'Signalements', value: '0', icon: 'flag-outline' },
+  { label: 'Annonces', value: '0', icon: 'megaphone-outline' },
 ];
 
 const AccueilEnseignantScreen = ({ navigation }) => {
   const theme = useTheme();
   const { user } = useAuth();
   const greetingName = `${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Enseignant';
+  const [stats, setStats] = useState(initialStats);
+  const [today, setToday] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const load = async () => {
+      try {
+        const [resRessources, resSujets, resSignalements, resAnnonces] = await Promise.all([
+          api.get('/ressources'),
+          api.get('/sujets'),
+          api.get('/signalements'),
+          api.get('/annonces'),
+        ]);
+
+        if (!mounted) return;
+
+        const ressources = resRessources.data || [];
+        const sujets = resSujets.data || [];
+        const signalements = resSignalements.data || [];
+        const annonces = resAnnonces.data || [];
+
+        const pad = (n) => String(n).padStart(2, '0');
+
+        setStats([
+          { label: 'Ressources', value: pad(ressources.length), icon: 'library-outline' },
+          { label: 'Sujets suivis', value: pad(sujets.length), icon: 'chatbubbles-outline' },
+          { label: 'Signalements', value: pad(signalements.length), icon: 'flag-outline' },
+          { label: 'Annonces', value: pad(annonces.length), icon: 'megaphone-outline' },
+        ]);
+
+        // Construire une liste "priorités" en combinant ressources et annonces
+        const recentRessources = ressources.map(r => ({
+          title: r.titre,
+          meta: `${r.categorie?.nom || ''} · ${r.nb_telechargements || 0} téléchargements`,
+          state: 'Nouveau',
+        }));
+
+        const recentAnnonces = annonces.map(a => ({
+          title: a.titre,
+          meta: `${a.auteur?.prenom || ''} · ${a.type || ''}`,
+          state: a.epingle ? 'Épinglé' : 'Actif',
+        }));
+
+        setToday([...recentAnnonces, ...recentRessources].slice(0, 3));
+
+      } catch (err) {
+        console.error('Erreur chargement dashboard enseignant', err);
+      }
+    };
+
+    load();
+    return () => { mounted = false; };
+  }, []);
 
   return (
-    <TeacherScreen title={`Bonjour, ${greetingName}`} subtitle="Espace enseignant UIYA">
+    <TeacherScreen
+      title={`Bonjour, ${greetingName}`}
+      subtitle="Espace enseignant UIYA"
+      rightIcon="search-outline"
+      onRightPress={() => navigation.navigate('Ressources')}
+    >
       <Card style={[local.hero, { backgroundColor: theme.primary }] }>
         <View style={local.heroText}>
           <Badge label="Semestre 2" />
@@ -46,10 +100,10 @@ const AccueilEnseignantScreen = ({ navigation }) => {
         ))}
       </View>
 
-      <View style={local.sectionHead}>
+      <TouchableOpacity style={local.sectionHead} onPress={() => navigation.navigate('Ressources')}> 
         <Text style={[local.sectionTitle, { color: theme.text }]}>Priorités du jour</Text>
         <Text style={[local.sectionLink, { color: theme.primary }]}>Voir tout</Text>
-      </View>
+      </TouchableOpacity>
 
       {today.map((item) => (
         <Card key={item.title} style={local.rowCard}>

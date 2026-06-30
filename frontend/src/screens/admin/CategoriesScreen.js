@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme, semantic } from '../../components/theme';
 import api from '../../services/api';
 
-const CategoriesScreen = () => {
+const CategoriesScreen = ({ navigation }) =>{
   const c = useTheme();
 
   const [categories,  setCategories]  = useState([]);
@@ -107,6 +107,8 @@ const CategoriesScreen = () => {
     );
   }
 
+  
+
   return (
     <View style={[styles.container, { backgroundColor: c.background }]}>
 
@@ -151,12 +153,15 @@ const CategoriesScreen = () => {
                   <Text style={[styles.catDesc, { color: c.subtext }]} numberOfLines={2}>
                     {cat.description || 'Aucune description'}
                   </Text>
-                  <View style={[styles.sujetsBadge, { backgroundColor: c.card }]}>
+                  <TouchableOpacity
+                    style={[styles.sujetsBadge, { backgroundColor: c.card }]}
+                    onPress={() => navigation.navigate('SujetsAdmin', { categorieId: cat.id, categorieNom: cat.nom })}
+                  >
                     <Ionicons name="chatbubble-outline" size={11} color={c.primary} />
                     <Text style={[styles.sujetsText, { color: c.primary }]}>
                       {cat.sujets_count || 0} sujets
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
 

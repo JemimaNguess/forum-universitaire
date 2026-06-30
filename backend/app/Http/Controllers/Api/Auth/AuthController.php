@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EtudiantAutorise;
+use App\Models\Notification;
 use App\Mail\CodeVerification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -61,6 +62,12 @@ class AuthController extends Controller
         if ($request->role === 'etudiant') {
             $autorise->update(['statut' => 'utilise']);
         }
+
+        // Notifier les admins
+        Notification::envoyerAuxAdmins('nouveau_compte', [
+            'nom'  => "{$user->prenom} {$user->nom}",
+            'role' => $request->role,
+        ]);
 
         // Envoyer le code par email
         Mail::to($user->email)->send(new CodeVerification($code));

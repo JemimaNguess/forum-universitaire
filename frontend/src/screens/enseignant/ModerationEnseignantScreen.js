@@ -1,77 +1,102 @@
-import React from 'react';
-import { Alert, View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActionButton, Badge, Card, TeacherScreen, teacherColors } from './TeacherUi';
 import { useTheme } from '../../components/theme';
-
-const topics = [
-  { title: "Besoin d'aide sur les arbres binaires", author: 'Marie L.', replies: 24, status: 'Épinglé' },
-  { title: 'Correction exercice récursivité', author: 'Kevin R.', replies: 11, status: 'Ouvert' },
-  { title: 'Débat hors sujet en programmation', author: 'Arthur D.', replies: 8, status: 'Signalé' },
-];
-
-const reports = [
-  { reason: 'Contenu inapproprié', user: 'Signalé par Awa K.', level: 'Urgent' },
-  { reason: 'Message répétitif', user: 'Signalé par Lucie B.', level: 'Normal' },
-];
+import api from '../../services/api';
 
 const ModerationEnseignantScreen = () => {
   const theme = useTheme();
+  const [signalements, setSignalements] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadSignalements = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/signalements');
+      setSignalements(response.data || []);
+    } catch (error) {
+      console.error('Erreur chargement signalements :', error);
+      Alert.alert('Erreur', 'Impossible de récupérer les signalements.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSignalements();
+  }, []);
+
+  const handleTraiter = async (id, action) => {
+    try {
+      await api.patch(`/signalements/${id}/traiter`, { action });
+      await loadSignalements();
+      Alert.alert('Succès', action === 'supprimer' ? 'Le message a été supprimé.' : 'Le signalement a été ignoré.');
+    } catch (error) {
+      console.error('Erreur traitement signalement :', error);
+      Alert.alert('Erreur', 'Impossible de traiter ce signalement.');
+    }
+  };
 
   return (
-    <TeacherScreen title="Modération" subtitle="Sujets, réponses et signalements" rightIcon="shield-checkmark-outline">
-    {topics.map((topic) => (
-      <Card key={topic.title} style={local.topicCard}>
-        <View style={local.topicTop}>
-          <View style={[local.topicIcon, { backgroundColor: theme.primary + '18' }]}>
-            <Ionicons name="chatbox-ellipses-outline" size={20} color={theme.primary} />
+    <TeacherScreen
+      title="Modération"
+      subtitle="Sujets, réponses et signalements"
+      rightIcon="shield-checkmark-outline"
+      onRightPress={loadSignalements}
+    >
+      {signalements.slice(0, 3).map((signalement) => (
+        <Card key={signalement.id} style={local.topicCard}>
+          <View style={local.topicTop}>
+            <View style={[local.topicIcon, { backgroundColor: theme.primary + '18' }]}>
+              <Ionicons name="chatbox-ellipses-outline" size={20} color={theme.primary} />
+            </View>
+            <View style={local.topicInfo}>
+              <Text style={[local.topicTitle, { color: theme.text }]}>
+                {signalement.message?.sujet?.titre || signalement.message?.contenu?.slice(0, 40) || 'Signalement'}
+              </Text>
+              <Text style={[local.topicMeta, { color: theme.subtext }]}> 
+                {signalement.auteur?.prenom || 'Utilisateur'} • {signalement.message?.sujet?.categorie?.nom || 'Sans catégorie'}
+              </Text>
+            </View>
+            <Badge
+              label={signalement.statut || 'en_attente'}
+              tone={signalement.statut === 'traite' ? 'green' : signalement.statut === 'en_attente' ? 'orange' : 'violet'}
+            />
           </View>
-          <View style={local.topicInfo}>
-            <Text style={[local.topicTitle, { color: theme.text }]}>{topic.title}</Text>
-            <Text style={[local.topicMeta, { color: theme.subtext }]}>{topic.author} · {topic.replies} réponses</Text>
+          <View style={local.actions}>
+            <ActionButton
+              label="Ignorer"
+              icon="close-outline"
+              variant="light"
+              onPress={() => handleTraiter(signalement.id, 'ignorer')}
+            />
+            <ActionButton
+              label="Supprimer"
+              icon="trash-outline"
+              variant="danger"
+              onPress={() => handleTraiter(signalement.id, 'supprimer')}
+            />
           </View>
-          <Badge
-            label={topic.status}
-            tone={topic.status === 'Signalé' ? 'red' : topic.status === 'Ouvert' ? 'green' : 'violet'}
-          />
-        </View>
-        <View style={local.actions}>
-          <ActionButton
-            label="Épingler"
-            icon="pin-outline"
-            variant="light"
-            onPress={() => Alert.alert('Sujet épinglé', topic.title)}
-          />
-          <ActionButton
-            label="Fermer"
-            icon="lock-closed-outline"
-            onPress={() => Alert.alert('Sujet fermé', topic.title)}
-          />
-        </View>
-      </Card>
-    ))}
+        </Card>
+      ))}
 
-    <Text style={[local.sectionTitle, { color: theme.text }]}>Signalements récents</Text>
-    {reports.map((report) => (
-      <Card key={report.reason} style={local.reportCard}>
-        <View style={local.reportLeft}>
-          <Ionicons name="flag-outline" size={20} color={teacherColors.danger} />
-          <View>
-            <Text style={[local.reportTitle, { color: theme.text }]}>{report.reason}</Text>
-            <Text style={[local.reportMeta, { color: theme.subtext }]}>{report.user}</Text>
+      <Text style={[local.sectionTitle, { color: theme.text, marginTop: 10 }]}>Signalements récents</Text>
+      {signalements.map((signalement) => (
+        <Card key={signalement.id} style={local.reportCard}>
+          <View style={local.reportLeft}>
+            <Ionicons name="flag-outline" size={20} color={teacherColors.danger} />
+            <View>
+              <Text style={[local.reportTitle, { color: theme.text }]}>{signalement.raison}</Text>
+              <Text style={[local.reportMeta, { color: theme.subtext }]}>
+                {signalement.auteur?.prenom || 'Utilisateur'} · {signalement.message?.sujet?.titre || 'Sujet inconnu'}
+              </Text>
+            </View>
           </View>
-        </View>
-        <Badge label={report.level} tone={report.level === 'Urgent' ? 'red' : 'orange'} />
-      </Card>
-    ))}
-
-    <ActionButton
-      label="Supprimer le message sélectionné"
-      icon="trash-outline"
-      variant="danger"
-      onPress={() => Alert.alert('Suppression', 'Action simulée en frontend uniquement.')}
-    />
-  </TeacherScreen>
+          <Badge label={signalement.statut || 'en_attente'} tone={signalement.statut === 'traite' ? 'green' : 'orange'} />
+        </Card>
+      ))}
+    </TeacherScreen>
   );
 };
 

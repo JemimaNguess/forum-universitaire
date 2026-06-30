@@ -31,7 +31,9 @@ const getApiHost = () => {
   return 'localhost';
 };
 
-const API_URL = `http:172.20.10.7:8000/api`;
+const API_URL = Constants.manifest?.extra?.apiHost
+  ? `http://${Constants.manifest.extra.apiHost}/api`
+  : `http://${getApiHost()}:8000/api`;
 console.log('[API] baseURL=', API_URL, 'expoHost=', getExpoHost());
 // Si tu utilises un vrai téléphone, ajoute "apiHost" dans app.json extra ou remplace ici par l'IP de ton PC.
 

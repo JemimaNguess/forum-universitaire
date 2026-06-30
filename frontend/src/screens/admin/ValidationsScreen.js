@@ -22,10 +22,18 @@ const ValidationsScreen = () => {
 
   const load = async () => {
     try {
-      const res = await api.get('/admin/enseignants-en-attente');
-      setTeachers(Array.isArray(res.data) ? res.data : []);
+      const [enAttenteRes, approuvesRes, refusesRes] = await Promise.all([
+        api.get('/admin/enseignants', { params: { statut: 'en_attente' } }),
+        api.get('/admin/enseignants', { params: { statut: 'actif' } }),
+        api.get('/admin/enseignants', { params: { statut: 'rejete' } }),
+      ]);
+      setTeachers(Array.isArray(enAttenteRes.data) ? enAttenteRes.data : []);
+      setApproved(Array.isArray(approuvesRes.data) ? approuvesRes.data : []);
+      setRejected(Array.isArray(refusesRes.data) ? refusesRes.data : []);
     } catch {
       setTeachers([]);
+      setApproved([]);
+      setRejected([]);
     } finally {
       setLoading(false);
     }
@@ -47,8 +55,7 @@ const ValidationsScreen = () => {
         onPress: async () => {
           try {
             await api.patch(`/admin/valider/${teacher.id}`);
-            setTeachers(curr => curr.filter(t => t.id !== teacher.id));
-            setApproved(curr => [{ ...teacher, statut: 'actif' }, ...curr]);
+            await load();
           } catch {
             Alert.alert('Erreur', 'Impossible de valider.');
           }
@@ -65,8 +72,7 @@ const ValidationsScreen = () => {
         onPress: async () => {
           try {
             await api.patch(`/admin/rejeter/${teacher.id}`);
-            setTeachers(curr => curr.filter(t => t.id !== teacher.id));
-            setRejected(curr => [{ ...teacher, statut: 'rejete' }, ...curr]);
+            await load();
           } catch {
             Alert.alert('Erreur', 'Impossible de rejeter.');
           }

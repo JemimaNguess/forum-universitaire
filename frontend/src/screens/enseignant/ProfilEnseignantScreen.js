@@ -1,43 +1,101 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, useColorScheme } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, useColorScheme, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActionButton, Card, TeacherScreen, teacherColors } from './TeacherUi';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../components/theme';
-
-const infos = [
-  ['Email', 'm.irie@uiya.edu.ci'],
-  ['Département', 'Informatique'],
-  ['Matières', 'Architecture des ordinateurs, Système d\'exploitation,devops'],
-  ['Statut', 'Compte enseignant validé'],
-];
+import api from '../../services/api';
 
 const ProfilEnseignantScreen = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const theme = useTheme();
   const scheme = useColorScheme();
   const mode = scheme === 'dark' ? 'dark' : 'light';
+  const [profile, setProfile] = useState(user);
+  const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    prenom: user?.prenom || '',
+    nom: user?.nom || '',
+    bio: user?.bio || '',
+    filiere: user?.filiere || '',
+    niveau: user?.niveau || '',
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get('/me');
+        setProfile(response.data);
+        updateUser(response.data);
+        setForm((prev) => ({
+          ...prev,
+          prenom: response.data.prenom || '',
+          nom: response.data.nom || '',
+          bio: response.data.bio || '',
+          filiere: response.data.filiere || '',
+          niveau: response.data.niveau || '',
+        }));
+      } catch (error) {
+        console.error('Erreur chargement profil :', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      const response = await api.put('/profile', {
+        nom: form.nom,
+        prenom: form.prenom,
+        bio: form.bio,
+        filiere: form.filiere,
+        niveau: form.niveau,
+      });
+      const updatedUser = response.data.user || response.data;
+      setProfile(updatedUser);
+      updateUser(updatedUser);
+      setEditing(false);
+      Alert.alert('Succès', 'Profil mis à jour.');
+    } catch (error) {
+      console.error('Erreur mise à jour profil :', error);
+      Alert.alert('Erreur', 'Impossible de mettre à jour le profil.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const infos = [
-    ['Email', user?.email || 'Non défini'],
-    ['Département', user?.departement || 'Informatique'],
-    ['Matières', user?.matieres || 'À définir'],
-    ['Statut', user?.statut ? `Compte ${user.statut}` : 'Compte enseignant']
+    ['Email', profile?.email || 'Non défini'],
+    ['Département', profile?.departement || profile?.filiere || 'À définir'],
+    ['Matières', profile?.matieres || 'À définir'],
+    ['Statut', profile?.statut ? `Compte ${profile.statut}` : 'Compte enseignant'],
   ];
 
-  const displayName = `${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Enseignant';
-  const initials = (user?.prenom?.[0] || user?.nom?.[0] || 'E').toUpperCase();
-  const roleLabel = user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}` : 'Enseignant';
+  const displayName = `${profile?.prenom || ''} ${profile?.nom || ''}`.trim() || 'Enseignant';
+  const initials = (profile?.prenom?.[0] || profile?.nom?.[0] || 'E').toUpperCase();
+  const roleLabel = profile?.role ? `${profile.role.charAt(0).toUpperCase()}${profile.role.slice(1)}` : 'Enseignant';
 
   return (
-    <TeacherScreen title="Profil" subtitle="Compte et préférences" rightIcon="settings-outline">
-      <Card style={[local.profileCard, { backgroundColor: theme.card }] }>
+    <TeacherScreen
+      title="Profil"
+      subtitle="Compte et préférences"
+      rightIcon="settings-outline"
+      onRightPress={() => setEditing(true)}
+    >
+      <Card style={[local.profileCard, { backgroundColor: theme.card }]}>
         <View style={local.avatar}>
           <Text style={local.avatarText}>{initials}</Text>
         </View>
         <Text style={[local.name, { color: theme.text }]}>{displayName}</Text>
         <Text style={[local.role, { color: theme.subtext }]}>{roleLabel} · UIYA</Text>
-        <View style={[local.scoreBox, { backgroundColor: theme.surface }] }>
+        <View style={[local.scoreBox, { backgroundColor: theme.surface }]}>
           <Ionicons name="star" size={18} color={theme.primary} />
           <Text style={[local.scoreText, { color: theme.text }]}>Réputation 4.8 · Badge Expert</Text>
         </View>
@@ -51,6 +109,52 @@ const ProfilEnseignantScreen = () => {
           </View>
         ))}
       </Card>
+
+      {editing ? (
+        <Card style={local.editCard}>
+          <TextInput
+            style={[local.input, { borderColor: theme.border, color: theme.text }]}
+            value={form.prenom}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, prenom: text }))}
+            placeholder="Prénom"
+            placeholderTextColor={theme.subtext}
+          />
+          <TextInput
+            style={[local.input, { borderColor: theme.border, color: theme.text }]}
+            value={form.nom}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, nom: text }))}
+            placeholder="Nom"
+            placeholderTextColor={theme.subtext}
+          />
+          <TextInput
+            style={[local.input, { borderColor: theme.border, color: theme.text }]}
+            value={form.filiere}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, filiere: text }))}
+            placeholder="Département / Filière"
+            placeholderTextColor={theme.subtext}
+          />
+          <TextInput
+            style={[local.input, { borderColor: theme.border, color: theme.text }]}
+            value={form.niveau}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, niveau: text }))}
+            placeholder="Niveau (L1, L2, L3, M1, M2)"
+            placeholderTextColor={theme.subtext}
+          />
+          <TextInput
+            style={[local.textArea, { borderColor: theme.border, color: theme.text }]}
+            value={form.bio}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, bio: text }))}
+            placeholder="À propos de vous"
+            placeholderTextColor={theme.subtext}
+            multiline
+          />
+          <ActionButton
+            label={saving ? 'Enregistrement...' : 'Enregistrer le profil'}
+            icon="save-outline"
+            onPress={handleSaveProfile}
+          />
+        </Card>
+      ) : null}
 
       <View style={[local.themeRow, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <View>
@@ -66,7 +170,7 @@ const ProfilEnseignantScreen = () => {
         />
       </View>
 
-      <ActionButton label="Modifier le profil" icon="create-outline" />
+      <ActionButton label="Modifier le profil" icon="create-outline" onPress={() => setEditing(true)} />
       <TouchableOpacity style={[local.logoutBtn, { backgroundColor: '#FDECEC' }]} onPress={logout}>
         <Ionicons name="log-out-outline" size={18} color={teacherColors.danger} />
         <Text style={local.logoutText}>Se déconnecter</Text>
@@ -130,6 +234,26 @@ const local = StyleSheet.create({
   infoValue: {
     color: teacherColors.ink,
     fontWeight: '800',
+  },
+  editCard: {
+    gap: 12,
+  },
+  input: {
+    minHeight: 50,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: 'transparent',
+  },
+  textArea: {
+    minHeight: 90,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    textAlignVertical: 'top',
+    backgroundColor: 'transparent',
   },
   themeRow: {
     flexDirection: 'row',

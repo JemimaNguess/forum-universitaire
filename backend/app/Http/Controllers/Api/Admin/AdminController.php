@@ -56,30 +56,33 @@ class AdminController extends Controller
         return response()->json($users);
     }
 
-    // ── Enseignants en attente ───────────────────
-    public function enseignantsEnAttente()
+    // ── Enseignants par statut ───────────────────
+    public function enseignants(Request $request)
     {
+        $statut = $request->query('statut', 'en_attente'); // en_attente | actif | rejete
+
         $enseignants = User::role('enseignant')
-                          ->where('statut', 'en_attente')
-                          ->orderByDesc('created_at')
-                          ->get()
-                          ->map(function($user) {
-                              return [
-                                  'id'        => $user->id,
-                                  'nom'       => $user->nom,
-                                  'prenom'    => $user->prenom,
-                                  'email'     => $user->email,
-                                  'matricule' => $user->matricule,
-                                  'filiere'   => $user->filiere,
-                                  'created_at'=> $user->created_at,
-                              ];
-                          });
+                        ->where('statut', $statut)
+                        ->orderByDesc('created_at')
+                        ->get()
+                        ->map(function($user) {
+                            return [
+                                'id'        => $user->id,
+                                'nom'       => $user->nom,
+                                'prenom'    => $user->prenom,
+                                'email'     => $user->email,
+                                'matricule' => $user->matricule,
+                                'filiere'   => $user->filiere,
+                                'statut'    => $user->statut,
+                                'created_at'=> $user->created_at,
+                            ];
+                        });
 
         return response()->json($enseignants);
     }
 
     // ── Valider un enseignant ────────────────────
-    public function validerEnseignant($id)
+    public function validerEnseignant(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
@@ -88,34 +91,32 @@ class AdminController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        // TODO : envoyer email confirmation
         Historique::logger(
-        'validation_enseignant',
-        "Validation du compte enseignant {$user->prenom} {$user->nom}",
-        $request->user()->id
+            'validation_enseignant',
+            "Validation du compte enseignant {$user->prenom} {$user->nom}",
+            $request->user()->id
         );
+
         return response()->json(['message' => 'Enseignant validé avec succès.']);
     }
 
     // ── Rejeter un enseignant ────────────────────
-    public function rejeterEnseignant($id)
+    public function rejeterEnseignant(Request $request, $id)
     {
         $user = User::findOrFail($id);
         $user->update(['statut' => 'rejete']);
 
-        // TODO : envoyer email de refus
-
         Historique::logger(
-        'rejet_enseignant',
-        "Rejet du compte enseignant {$user->prenom} {$user->nom}",
-        $request->user()->id
+            'rejet_enseignant',
+            "Rejet du compte enseignant {$user->prenom} {$user->nom}",
+            $request->user()->id
         );
 
         return response()->json(['message' => 'Enseignant rejeté.']);
     }
 
     // ── Bloquer un utilisateur ───────────────────
-    public function bloquerUser($id)
+    public function bloquerUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
@@ -126,13 +127,40 @@ class AdminController extends Controller
         $user->update(['statut' => 'rejete']);
 
         Historique::logger(
-        'blocage_utilisateur',
-        "Blocage de l'utilisateur {$user->prenom} {$user->nom}",
-        $request->user()->id
+            'blocage_utilisateur',
+            "Blocage de l'utilisateur {$user->prenom} {$user->nom}",
+            $request->user()->id
         );
 
         return response()->json(['message' => 'Utilisateur bloqué.']);
     }
+
+    // ── Supprimer un utilisateur ─────────────────
+    public function supprimerUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->hasRole('admin')) {
+            return response()->json(['message' => 'Impossible de supprimer un admin.'], 403);
+        }
+
+        if ($user->hasRole('etudiant') && $user->matricule) {
+            \App\Models\EtudiantAutorise::where('matricule', $user->matricule)
+                ->update(['statut' => 'disponible']);
+        }
+
+        Historique::logger(
+            'suppression_utilisateur',
+            "Suppression de l'utilisateur {$user->prenom} {$user->nom}",
+            $request->user()->id
+        );
+
+        $user->delete();
+
+        return response()->json(['message' => 'Utilisateur supprimé.']);
+    }
+
+
 
     // ── Réactiver un utilisateur ─────────────────
     public function reactiverUser($id)
@@ -143,30 +171,6 @@ class AdminController extends Controller
         return response()->json(['message' => 'Utilisateur réactivé.']);
     }
 
-    // ── Supprimer un utilisateur ─────────────────
-    public function supprimerUser($id)
-    {
-        $user = User::findOrFail($id);
-
-        if ($user->hasRole('admin')) {
-            return response()->json(['message' => 'Impossible de supprimer un admin.'], 403);
-        }
-
-        // Remettre le matricule disponible si c'est un étudiant
-        if ($user->hasRole('etudiant') && $user->matricule) {
-            \App\Models\EtudiantAutorise::where('matricule', $user->matricule)
-                ->update(['statut' => 'disponible']);
-        }
-
-        Historique::logger(
-        'suppression_utilisateur',
-        "Suppression de l'utilisateur {$user->prenom} {$user->nom}",
-        $request->user()->id
-        );
-        $user->delete();
-
-        return response()->json(['message' => 'Utilisateur supprimé.']);
-    }
 
     // ── Import fichier Excel ─────────────────────
     public function importExcel(Request $request)

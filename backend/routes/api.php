@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/notifications/{id}/lu',    [NotificationController::class, 'marquerLu']);
     Route::patch('/notifications/tout-lu',    [NotificationController::class, 'marquerToutLu']);
     Route::delete('/notifications/{id}',      [NotificationController::class, 'destroy']);
+    
 
     // ── Routes IA (tous rôles connectés) ──────
     Route::post('/ia/assister',           [IAController::class, 'assister']);
@@ -78,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admin/users/{id}',          [AdminController::class, 'supprimerUser']);
 
         // Validations enseignants
-        Route::get('/admin/enseignants-en-attente', [AdminController::class, 'enseignantsEnAttente']);
+        Route::get('/admin/enseignants', [AdminController::class, 'enseignants']);
         Route::patch('/admin/valider/{id}',         [AdminController::class, 'validerEnseignant']);
         Route::patch('/admin/rejeter/{id}',         [AdminController::class, 'rejeterEnseignant']);
 
@@ -104,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sujets/{id}',                 [SujetController::class, 'show']);
     Route::post('/sujets',                     [SujetController::class, 'store']);
     Route::put('/sujets/{id}',                 [SujetController::class, 'update']);
+    Route::put('/sujets/{id}/statut',          [SujetController::class, 'updateStatut']);
     Route::delete('/sujets/{id}',              [SujetController::class, 'destroy']);
     Route::get('/categories/{id}/sujets',      [SujetController::class, 'parCategorie']);
 

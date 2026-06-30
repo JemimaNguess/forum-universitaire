@@ -18,17 +18,21 @@ export const teacherColors = {
   blue: '#3B82F6',
 };
 
-export const TeacherScreen = ({ title, subtitle, children, rightIcon = 'search-outline' }) => {
+export const TeacherScreen = ({ title, subtitle, children, rightIcon = 'search-outline', onRightPress }) => {
   const c = useTheme();
 
   return (
-    <View style={[styles.screen, { backgroundColor: c.background }]}>
+    <View style={[styles.screen, { backgroundColor: c.background }]}> 
       <View style={[styles.header, { backgroundColor: c.background }] }>
         <View>
           <Text style={[styles.title, { color: c.text }]}>{title}</Text>
           {subtitle ? <Text style={[styles.subtitle, { color: c.subtext }]}>{subtitle}</Text> : null}
         </View>
-        <TouchableOpacity style={[styles.iconBtn, { backgroundColor: c.card, borderColor: c.border }] }>
+        <TouchableOpacity
+          style={[styles.iconBtn, { backgroundColor: c.card, borderColor: c.border }] }
+          onPress={onRightPress}
+          activeOpacity={onRightPress ? 0.7 : 1}
+        >
           <Ionicons name={rightIcon} size={20} color={c.text} />
         </TouchableOpacity>
       </View>

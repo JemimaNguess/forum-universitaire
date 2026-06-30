@@ -13,21 +13,32 @@ const DashboardScreen = ({ navigation }) => {
   const c                = useTheme();
   const { user, logout } = useAuth();
 
-  const [stats,      setStats]      = useState(null);
-  const [attente,    setAttente]    = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [stats,        setStats]        = useState(null);
+  const [attente,      setAttente]      = useState([]);
+  const [notifsCount,  setNotifsCount]  = useState(0);
+  const [messagesCount,setMessagesCount]= useState(0);
+  const [loading,      setLoading]      = useState(true);
+  const [refreshing,   setRefreshing]   = useState(false);
 
   const load = async () => {
     try {
-      const [statsRes, attenteRes] = await Promise.all([
+      const [statsRes, attenteRes, notifsRes, messagesRes] = await Promise.all([
         api.get('/admin/statistiques'),
-        api.get('/admin/enseignants-en-attente'),
+        api.get('/admin/enseignants', { params: { statut: 'en_attente' } }),
+        api.get('/notifications'),
+        api.get('/messages-prives'),
       ]);
       setStats(statsRes.data);
       setAttente(attenteRes.data.slice(0, 3));
+
+      const notifs = Array.isArray(notifsRes.data) ? notifsRes.data : [];
+      setNotifsCount(notifs.filter(n => !n.read_at).length);
+
+      const conversations = Array.isArray(messagesRes.data) ? messagesRes.data : [];
+      const totalNonLus = conversations.reduce((sum, conv) => sum + (conv.non_lus || 0), 0);
+      setMessagesCount(totalNonLus);
     } catch (err) {
-      console.log('Erreur dashboard:', err);
+      console.log('Erreur dashboard:', err.response?.status, err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -72,12 +83,26 @@ const DashboardScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('Notifications')}
           >
             <Ionicons name="notifications-outline" size={20} color={c.primary} />
+            {notifsCount > 0 && (
+              <View style={[styles.badge, { backgroundColor: semantic.error }]}>
+                <Text style={styles.badgeText}>
+                  {notifsCount > 9 ? '9+' : notifsCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.iconBtn, { backgroundColor: c.card, borderColor: c.border }]}
             onPress={() => navigation.navigate('Messagerie')}
           >
             <Ionicons name="chatbubble-outline" size={20} color={c.primary} />
+            {messagesCount > 0 && (
+              <View style={[styles.badge, { backgroundColor: semantic.error }]}>
+                <Text style={styles.badgeText}>
+                  {messagesCount > 9 ? '9+' : messagesCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -85,7 +110,7 @@ const DashboardScreen = ({ navigation }) => {
       {/* Badge Admin */}
       <View style={[styles.badgeAdmin, { backgroundColor: c.card, borderColor: c.border }]}>
         <Ionicons name="shield-checkmark-outline" size={16} color={c.primary} />
-        <Text style={[styles.badgeText, { color: c.primary }]}>Administrateur</Text>
+        <Text style={[styles.badgeText2, { color: c.primary }]}>Administrateur</Text>
       </View>
 
       {/* Statistiques */}
@@ -145,8 +170,8 @@ const DashboardScreen = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
-              <View style={[styles.badge, { backgroundColor: semantic.warningBg }]}>
-                <Text style={[styles.badgeLabel, { color: semantic.warning }]}>En attente</Text>
+              <View style={[styles.statutBadge, { backgroundColor: semantic.warningBg }]}>
+                <Text style={[styles.statutLabel, { color: semantic.warning }]}>En attente</Text>
               </View>
             </View>
           ))}
@@ -189,8 +214,10 @@ const styles = StyleSheet.create({
   name:            { fontSize: 18, fontWeight: '700' },
   headerIcons:     { flexDirection: 'row', gap: 8 },
   iconBtn:         { width: 38, height: 38, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  badge:           { position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
+  badgeText:       { color: '#fff', fontSize: 10, fontWeight: '700' },
   badgeAdmin:      { flexDirection: 'row', alignItems: 'center', gap: 8, margin: 16, padding: 10, borderRadius: 10, borderWidth: 1, justifyContent: 'center' },
-  badgeText:       { fontSize: 14, fontWeight: '700' },
+  badgeText2:      { fontSize: 14, fontWeight: '700' },
   sectionTitle:    { fontSize: 16, fontWeight: '700', marginHorizontal: 16, marginTop: 20, marginBottom: 12 },
   statsGrid:       { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 10 },
   statCard:        { width: '30%', padding: 14, borderRadius: 12, borderWidth: 1, alignItems: 'center', gap: 4 },
@@ -205,8 +232,8 @@ const styles = StyleSheet.create({
   alertAvatarText: { fontWeight: '700', fontSize: 14 },
   alertTitle:      { fontSize: 13, fontWeight: '600' },
   alertSub:        { fontSize: 12 },
-  badge:           { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  badgeLabel:      { fontSize: 11, fontWeight: '700' },
+  statutBadge:     { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  statutLabel:     { fontSize: 11, fontWeight: '700' },
   voirTout:        { textAlign: 'center', fontSize: 13, fontWeight: '600', marginTop: 8, marginBottom: 16 },
   logoutBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, margin: 16, marginTop: 24, padding: 14, borderRadius: 12, borderWidth: 1.5 },
   logoutText:      { fontSize: 15, fontWeight: '700' },

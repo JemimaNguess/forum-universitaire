@@ -46,6 +46,12 @@ class RessourceController extends Controller
     // ── Créer une ressource ──────────────────────
     public function store(Request $request)
     {
+        $user = $request->user();
+
+        if (!$user->hasRole('enseignant') && !$user->hasRole('admin')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
+
         $request->validate([
             'titre'        => 'required|string|max:255',
             'categorie_id' => 'required|exists:categories,id',
