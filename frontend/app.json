@@ -7,7 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
       "backgroundColor": "#0F0A1E"
     },
     "ios": {
@@ -19,7 +18,8 @@
         "backgroundColor": "#7C3AED"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.moaye_jemima.forumuiya"
+      "package": "com.moaye_jemima.forumuiya",
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,9 +29,13 @@
       "expo-font"
     ],
     "extra": {
+      "apiHost": "10.135.16.189:8000",
       "eas": {
         "projectId": "26901e02-8964-4eb2-9b39-bb8ab6e7bc2e"
       }
+    },
+    "eas": {
+      "projectId": "26901e02-8964-4eb2-9b39-bb8ab6e7bc2e"
     }
   }
 }
