@@ -139,3 +139,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Statut sujet
     Route::patch('/sujets/{id}/statut',        [SujetController::class, 'updateStatut']);
 });
+Route::get('/ping', function () {
+    return response()->json(['status' => 'ok']);
+});
